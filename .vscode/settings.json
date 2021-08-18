@@ -1,0 +1,21 @@
+{
+  "java.configuration.updateBuildConfiguration": "automatic",
+  "editor.formatOnSave": true,
+  "editor.formatOnPaste": true,
+  "java.server.launchMode": "Standard",
+  "files.exclude": {
+    "**/build/": true,
+    "**/.gradle/": true,
+    "**/.git": true,
+    "**/.svn": true,
+    "**/.hg": true,
+    "**/CVS": true,
+    "**/.DS_Store": true,
+    "bin/": true,
+    "**/.classpath": true,
+    "**/.project": true,
+    "**/.settings": true,
+    "**/.factorypath": true,
+    "**/*~": true
+  }
+}
