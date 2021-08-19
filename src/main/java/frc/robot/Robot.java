@@ -24,6 +24,18 @@ public class Robot extends CommandRobot {
 
     final private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
+    // Robot map initalization
+    final private NetworkTableEntry nameEntry = Shuffleboard.getTab("RobotData").addPersistent("RobotName", "Unknown")
+            .getEntry();
+    final private String robotName = nameEntry.getString("Unknown");
+    final private RobotMap map = getMapForName(robotName, RobotMap.class, "frc.robot.maps", new RobotMap());
+
+    private final Drive drive = new Drive(map.getDriveMap());
+    private final Intake intake = new Intake();
+    private final Shooter shooter = new Shooter();
+    private final Spindexer Spindexer = new Spindexer();
+    private final Turret turret = new Turret();
+
     /**
      * This function sets up each controller to have the appropriate button mappings
      */
