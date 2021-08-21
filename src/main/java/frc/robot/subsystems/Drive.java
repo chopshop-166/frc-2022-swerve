@@ -32,15 +32,15 @@ public class Drive extends SmartSubsystemBase {
     public Drive(final DriveMap map) {
         super();
 
-        frontLeft = map.frontLeft();
-        frontRight = map.frontRight();
-        rearLeft = map.rearLeft();
-        rearRight = map.rearRight();
+        frontLeft = map.getFrontLeft();
+        frontRight = map.getFrontRight();
+        rearLeft = map.getRearLeft();
+        rearRight = map.getRearRight();
         kinematics = new SwerveDriveKinematics(frontLeft.getLocation(), frontRight.getLocation(),
                 rearLeft.getLocation(), rearRight.getLocation());
-        gyro = map.gyro();
-        maxDriveSpeedMetersPerSecond = map.maxDriveSpeedMetersPerSecond();
-        maxRotationRadiansPerSecond = map.maxRotationRadianPerSecond();
+        gyro = map.getGyro();
+        maxDriveSpeedMetersPerSecond = map.getMaxDriveSpeedMetersPerSecond();
+        maxRotationRadiansPerSecond = map.getMaxRotationRadianPerSecond();
     }
 
     public CommandBase fieldCentricDrive(final DoubleSupplier translateX, final DoubleSupplier translateY,

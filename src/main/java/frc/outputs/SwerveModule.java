@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.util.Units;
 
 public class SwerveModule {
 
+    // Overall gear ratio for the swerve module drive motor
     private static final double GEAR_RATIO = 1 / 6.86;
     private static final double WHEEL_DIAMETER_M = Units.inchesToMeters(4);
 
@@ -46,22 +47,6 @@ public class SwerveModule {
         return location;
     }
 
-    public Rotation2d getAngle() {
-        return Rotation2d.fromDegrees(steeringEncoder.getAbsolutePosition());
-    }
-
-    /**
-     * Optimizes the desired module angle by taking into account the current module
-     * angle
-     *
-     * @param desiredState The module state as calculated by a SwerveDriveKinematics
-     *                     object
-     * @return The optimized module state
-     */
-    private SwerveModuleState calculateSteeringAngle(final SwerveModuleState desiredState) {
-        return SwerveModuleState.optimize(desiredState, getAngle());
-    }
-
     /**
      * Process the desired state and set the output values for the motor controllers
      *
@@ -79,6 +64,12 @@ public class SwerveModule {
         driveController.setSetpoint(state.speedMetersPerSecond);
     }
 
+    /**
+     * Configures a PIDSparkMax for use as the drive motor on a MK3 swerve module
+     *
+     * @param motor Drive motor controller to configure
+     * @return Drive motor controller for chaining
+     */
     public static PIDSparkMax configureDriveMotor(final PIDSparkMax motor) {
         // Get raw objects from the PIDSparkMax
         final CANSparkMax sparkMax = motor.getMotorController();
@@ -100,5 +91,26 @@ public class SwerveModule {
 
         // Return the original object so this can be chained
         return motor;
+    }
+
+    /**
+     * Returns the current angle of the swerve module
+     *
+     * @return The current angle of the module
+     */
+    private Rotation2d getAngle() {
+        return Rotation2d.fromDegrees(steeringEncoder.getAbsolutePosition());
+    }
+
+    /**
+     * Optimizes the desired module angle by taking into account the current module
+     * angle
+     *
+     * @param desiredState The module state as calculated by a SwerveDriveKinematics
+     *                     object
+     * @return The optimized module state
+     */
+    private SwerveModuleState calculateSteeringAngle(final SwerveModuleState desiredState) {
+        return SwerveModuleState.optimize(desiredState, getAngle());
     }
 }

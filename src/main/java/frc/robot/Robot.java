@@ -47,7 +47,7 @@ public class Robot extends CommandRobot {
      */
     private void setDefaultCommands() {
         drive.setDefaultCommand(drive.fieldCentricDrive(() -> driveController.getX(Hand.kLeft),
-                () -> driveController.getY(Hand.kLeft), () -> driveController.getX(Hand.kLeft)));
+                () -> driveController.getY(Hand.kLeft), () -> driveController.getX(Hand.kRight)));
     }
 
     /**
