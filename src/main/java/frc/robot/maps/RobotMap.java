@@ -1,30 +1,37 @@
 package frc.robot.maps;
 
+import com.chopshop166.chopshoplib.maps.RobotMapFor;
+import com.chopshop166.chopshoplib.outputs.SmartMotorController;
 import com.chopshop166.chopshoplib.sensors.MockGyro;
+import com.ctre.phoenix.sensors.CANCoder;
 
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
+import frc.outputs.SwerveModule;
 
+// Need to get MAC address for roborio
+@RobotMapFor("Default")
 public class RobotMap {
     public static class DriveMap {
-        // Locations for the swerve drive modules relative to the robot center.
-        // Distances are in Meter
-
-        public Translation2d frontLeftLocation() {
-            return new Translation2d(0.381, 0.381);
+        // All Distances are in Meters
+        public SwerveModule frontLeft() {
+            return new SwerveModule(new Translation2d(0.381, 0.381), new CANCoder(0), new SmartMotorController(),
+                    new SmartMotorController());
         }
 
-        public Translation2d frontRightLocation() {
-            return new Translation2d(0.381, -0.381);
+        public SwerveModule frontRight() {
+            return new SwerveModule(new Translation2d(0.381, -0.381), new CANCoder(1), new SmartMotorController(),
+                    new SmartMotorController());
         }
 
-        public Translation2d rearLeftLocation() {
-            return new Translation2d(-0.381, 0.381);
+        public SwerveModule rearLeft() {
+            return new SwerveModule(new Translation2d(-0.381, 0.381), new CANCoder(2), new SmartMotorController(),
+                    new SmartMotorController());
         }
 
-        public Translation2d rearRightLocation() {
-            return new Translation2d(-0.381, -0.381);
+        public SwerveModule rearRight() {
+            return new SwerveModule(new Translation2d(-0.381, -0.381), new CANCoder(3), new SmartMotorController(),
+                    new SmartMotorController());
         }
 
         public double maxDriveSpeedMetersPerSecond() {

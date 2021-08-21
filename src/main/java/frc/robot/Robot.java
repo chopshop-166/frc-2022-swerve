@@ -5,10 +5,14 @@
 package frc.robot;
 
 import com.chopshop166.chopshoplib.commands.CommandRobot;
+import com.chopshop166.chopshoplib.controls.ButtonXboxController;
 
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.maps.RobotMap;
+import frc.robot.subsystems.Drive;
 import io.github.oblarg.oblog.Logger;
 
 /**
@@ -24,22 +28,26 @@ public class Robot extends CommandRobot {
 
     final private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
+    final private ButtonXboxController driveController = new ButtonXboxController(0);
+
     // Robot map initalization
-    final private NetworkTableEntry nameEntry = Shuffleboard.getTab("RobotData").addPersistent("RobotName", "Unknown")
-            .getEntry();
-    final private String robotName = nameEntry.getString("Unknown");
-    final private RobotMap map = getMapForName(robotName, RobotMap.class, "frc.robot.maps", new RobotMap());
+    final private RobotMap map = getRobotMap(RobotMap.class, "frc.robot.maps", new RobotMap());
 
     private final Drive drive = new Drive(map.getDriveMap());
-    private final Intake intake = new Intake();
-    private final Shooter shooter = new Shooter();
-    private final Spindexer Spindexer = new Spindexer();
-    private final Turret turret = new Turret();
 
     /**
      * This function sets up each controller to have the appropriate button mappings
      */
     private void configureButtonBindings() {
+        // No button bindings yet
+    }
+
+    /**
+     *
+     */
+    private void setDefaultCommands() {
+        drive.setDefaultCommand(drive.fieldCentricDrive(() -> driveController.getX(Hand.kLeft),
+                () -> driveController.getY(Hand.kLeft), () -> driveController.getX(Hand.kLeft)));
     }
 
     /**
@@ -51,6 +59,7 @@ public class Robot extends CommandRobot {
         super.robotInit();
         Logger.configureLoggingAndConfig(this, false);
         configureButtonBindings();
+        setDefaultCommands();
     }
 
     @Override

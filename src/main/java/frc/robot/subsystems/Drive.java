@@ -14,18 +14,30 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import frc.outputs.SwerveModule;
 import frc.robot.maps.RobotMap.DriveMap;
 
 public class Drive extends SmartSubsystemBase {
     // Creating my kinematics object using the module locations
-    SwerveDriveKinematics kinematics;
-    double maxDriveSpeedMetersPerSecond;
-    double maxRotationRadiansPerSecond;
-    Gyro gyro;
+    private final SwerveDriveKinematics kinematics;
+    private final SwerveModule frontLeft;
+    private final SwerveModule frontRight;
+    private final SwerveModule rearLeft;
+    private final SwerveModule rearRight;
 
-    public Drive(DriveMap map) {
-        kinematics = new SwerveDriveKinematics(map.frontLeftLocation(), map.frontRightLocation(),
-                map.rearLeftLocation(), map.rearRightLocation());
+    private final double maxDriveSpeedMetersPerSecond;
+    private final double maxRotationRadiansPerSecond;
+    private final Gyro gyro;
+
+    public Drive(final DriveMap map) {
+        super();
+
+        frontLeft = map.frontLeft();
+        frontRight = map.frontRight();
+        rearLeft = map.rearLeft();
+        rearRight = map.rearRight();
+        kinematics = new SwerveDriveKinematics(frontLeft.getLocation(), frontRight.getLocation(),
+                rearLeft.getLocation(), rearRight.getLocation());
         gyro = map.gyro();
         maxDriveSpeedMetersPerSecond = map.maxDriveSpeedMetersPerSecond();
         maxRotationRadiansPerSecond = map.maxRotationRadianPerSecond();
@@ -35,27 +47,27 @@ public class Drive extends SmartSubsystemBase {
             final DoubleSupplier rotation) {
         return running("Field Centric Drive", () -> {
             // Need to convert inputs from -1..1 scale to m/s
-            double translateXSpeed = translateX.getAsDouble() * maxDriveSpeedMetersPerSecond;
-            double translateYSpeed = translateY.getAsDouble() * maxDriveSpeedMetersPerSecond;
-            double rotationSpeed = rotation.getAsDouble() * maxRotationRadiansPerSecond;
+            final double translateXSpeed = translateX.getAsDouble() * maxDriveSpeedMetersPerSecond;
+            final double translateYSpeed = translateY.getAsDouble() * maxDriveSpeedMetersPerSecond;
+            final double rotationSpeed = rotation.getAsDouble() * maxRotationRadiansPerSecond;
 
-            ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(translateXSpeed, translateYSpeed,
+            final ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(translateXSpeed, translateYSpeed,
                     rotationSpeed, Rotation2d.fromDegrees(gyro.getAngle()));
 
             // Now use this in our kinematics
-            SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(speeds);
+            final SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(speeds);
 
             // Front left module state
-            SwerveModuleState frontLeft = moduleStates[0];
+            frontLeft.setDesiredState(moduleStates[0]);
 
             // Front right module state
-            SwerveModuleState frontRight = moduleStates[1];
+            frontRight.setDesiredState(moduleStates[1]);
 
             // Back left module state
-            SwerveModuleState rearLeft = moduleStates[2];
+            rearLeft.setDesiredState(moduleStates[2]);
 
             // Back right module state
-            SwerveModuleState rearRight = moduleStates[3];
+            rearRight.setDesiredState(moduleStates[3]);
         });
     }
 
@@ -69,6 +81,7 @@ public class Drive extends SmartSubsystemBase {
     @Override
     public void reset() {
         // Nothing to reset here
+        gyro.reset();
     }
 
     @Override
