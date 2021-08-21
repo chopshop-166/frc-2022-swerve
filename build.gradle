@@ -93,9 +93,13 @@ jar { manifest chopshop.manifest(ROBOT_MAIN_CLASS) }
 
 tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
     reports {
-        xml.enabled false
-        html.enabled true
-        html.stylesheet resources.text.fromFile('config/xsl/fancy.xsl')
+        xml {
+            enabled = false
+        }
+        html {
+            enabled = true
+            stylesheet = 'fancy-hist.xsl'
+        }
     }
 }
 
@@ -105,7 +109,7 @@ spotbugs {
 }
 
 pmd {
-    toolVersion = "6.34.0"
+    toolVersion = "6.37.0"
     ignoreFailures = true
     ruleSets = []
     ruleSetFiles = files("$rootProject.projectDir/config/pmd-ruleset.xml")
