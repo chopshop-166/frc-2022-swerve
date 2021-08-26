@@ -38,16 +38,28 @@ public class Robot extends CommandRobot {
     /**
      * This function sets up each controller to have the appropriate button mappings
      */
-    private void configureButtonBindings() {
+    @Override
+    public void configureButtonBindings() {
         // No button bindings yet
+    }
+
+    @Override
+    public void populateDashboard() {
+        // TODO: Define dashboard
     }
 
     /**
      *
      */
-    private void setDefaultCommands() {
+    @Override
+    public void setDefaultCommands() {
         drive.setDefaultCommand(drive.fieldCentricDrive(() -> driveController.getX(Hand.kLeft),
                 () -> driveController.getY(Hand.kLeft), () -> driveController.getX(Hand.kRight)));
+    }
+
+    @Override
+    public void populateAutonomous() {
+        // TODO: Define autonomous
     }
 
     /**
@@ -58,8 +70,6 @@ public class Robot extends CommandRobot {
     public void robotInit() {
         super.robotInit();
         Logger.configureLoggingAndConfig(this, false);
-        configureButtonBindings();
-        setDefaultCommands();
     }
 
     @Override

@@ -50,13 +50,13 @@ repositories {
 }
 
 chopshop {
-    version = "2022.1.1-alpha1"
+    version = "2022.1.1-alpha2"
 }
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
 // Also defines JUnit 4.
 dependencies {
-    implementation "com.github.Oblarg.Oblog:lib:3.1.0"
+    implementation "com.github.Oblarg.Oblog:lib:3.1.2"
     implementation wpi.deps.wpilib()
     nativeZip wpi.deps.wpilibJni(wpi.platforms.roborio)
     nativeDesktopZip wpi.deps.wpilibJni(wpi.platforms.desktop)
