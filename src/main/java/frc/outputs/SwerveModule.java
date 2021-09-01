@@ -85,9 +85,11 @@ public class SwerveModule {
 
         // Configure PID
         // https: // docs.revrobotics.com/sparkmax/operating-modes/closed-loop-control
-        pid.setP(0.1);
+        pid.setP(0.00035);
         pid.setI(0);
-        pid.setD(0);
+        pid.setD(0.00045);
+        pid.setFF(0.00017);
+        sparkMax.burnFlash();
 
         // Return the original object so this can be chained
         return motor;
