@@ -28,27 +28,35 @@ public class SwerveBot extends RobotMap {
         // All Distances are in Meters
         // Front Left Module
         final PIDSparkMax frontLeftController = new PIDSparkMax(new CANSparkMax(1, MotorType.kBrushless));
+        final CANCoder encoderFL = new CANCoder(1);
+        encoderFL.configMagnetOffset(-36.0078125);
         SwerveModule.configureDriveMotor(frontLeftController);
         final SwerveModule frontLeft = new SwerveModule(new Translation2d(MODULE_OFFSET_XY, MODULE_OFFSET_XY),
-                new CANCoder(1), new PIDSparkMax(new CANSparkMax(2, MotorType.kBrushless)), frontLeftController);
+                encoderFL, new PIDSparkMax(new CANSparkMax(2, MotorType.kBrushless)), frontLeftController);
 
         // Front Right Module
         final PIDSparkMax frontRightController = new PIDSparkMax(new CANSparkMax(3, MotorType.kBrushless));
+        final CANCoder encoderFR = new CANCoder(2);
+        encoderFR.configMagnetOffset(-293.02734375000006);
         SwerveModule.configureDriveMotor(frontRightController);
         final SwerveModule frontRight = new SwerveModule(new Translation2d(MODULE_OFFSET_XY, -MODULE_OFFSET_XY),
-                new CANCoder(2), new PIDSparkMax(new CANSparkMax(4, MotorType.kBrushless)), frontRightController);
+                encoderFR, new PIDSparkMax(new CANSparkMax(4, MotorType.kBrushless)), frontRightController);
 
         // Rear Left Module
         final PIDSparkMax rearLeftController = new PIDSparkMax(new CANSparkMax(5, MotorType.kBrushless));
+        final CANCoder encoderRL = new CANCoder(3);
+        encoderRL.configMagnetOffset(-102.6562);
         SwerveModule.configureDriveMotor(rearLeftController);
         final SwerveModule rearLeft = new SwerveModule(new Translation2d(-MODULE_OFFSET_XY, MODULE_OFFSET_XY),
-                new CANCoder(3), new PIDSparkMax(new CANSparkMax(6, MotorType.kBrushless)), rearLeftController);
+                encoderRL, new PIDSparkMax(new CANSparkMax(6, MotorType.kBrushless)), rearLeftController);
 
         // Rear Right Module
         final PIDSparkMax rearRightController = new PIDSparkMax(new CANSparkMax(7, MotorType.kBrushless));
+        final CANCoder encoderRR = new CANCoder(4);
+        encoderRR.configMagnetOffset(-269.121);
         SwerveModule.configureDriveMotor(rearRightController);
         final SwerveModule rearRight = new SwerveModule(new Translation2d(-MODULE_OFFSET_XY, -MODULE_OFFSET_XY),
-                new CANCoder(4), new PIDSparkMax(new CANSparkMax(8, MotorType.kBrushless)), rearRightController);
+                encoderRR, new PIDSparkMax(new CANSparkMax(8, MotorType.kBrushless)), rearRightController);
 
         final double maxDriveSpeedMetersPerSecond = Units.feetToMeters(14.4);
 
