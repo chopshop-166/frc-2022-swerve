@@ -10,11 +10,12 @@ import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 import frc.outputs.SwerveModule;
 
 // Need to get MAC address for roborio
-@RobotMapFor("SwerveBotMac")
+@RobotMapFor("00:80:2F:19:7B:A3")
 public class SwerveBot extends RobotMap {
 
     @Override
