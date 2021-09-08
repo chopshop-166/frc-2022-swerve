@@ -6,11 +6,13 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANEncoder;
 import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
 
 import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 
 public class SwerveModule {
@@ -25,9 +27,9 @@ public class SwerveModule {
     private final PIDController steeringPID;
     private final SmartMotorController driveController;
 
-    private static final double K_P = 0.1;
-    private static final double K_I = 0.1;
-    private static final double K_D = 0.1;
+    private static final double K_P = 0.00;
+    private static final double K_I = 0.0;
+    private static final double K_D = 0.0;
 
     public SwerveModule(final Translation2d moduleLocation, final CANCoder steeringEncoder,
             final SmartMotorController steeringController, final SmartMotorController driveController) {
@@ -58,10 +60,12 @@ public class SwerveModule {
         // Run Steering angle PID to calculate output since the Spark Max can't take
         // advantage of the Cancoder
         final double angleOutput = steeringPID.calculate(getAngle().getDegrees(), state.angle.getDegrees());
-        steeringController.setSetpoint(angleOutput);
+        steeringController.set(angleOutput);
 
         // Set the drive motor output speed
-        driveController.setSetpoint(state.speedMetersPerSecond);
+        driveController.setSetpoint(state.speedMetersPerSecond / ((GEAR_RATIO * Math.PI * WHEEL_DIAMETER_M) / 60));
+        SmartDashboard.putNumber(location.toString(), driveController.get());
+        SmartDashboard.putNumber(location.toString() + "set", state.speedMetersPerSecond);
     }
 
     /**
@@ -77,6 +81,7 @@ public class SwerveModule {
         final CANPIDController pid = motor.getPidController();
 
         // Set Motor controller configuration
+        motor.setControlType(ControlType.kVelocity);
         sparkMax.setIdleMode(CANSparkMax.IdleMode.kBrake);
         // Set velocity conversion to convert RPM to M/s
         encoder.setVelocityConversionFactor((GEAR_RATIO * Math.PI * WHEEL_DIAMETER_M) / 60);

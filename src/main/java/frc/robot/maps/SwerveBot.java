@@ -2,15 +2,14 @@ package frc.robot.maps;
 
 import com.chopshop166.chopshoplib.maps.RobotMapFor;
 import com.chopshop166.chopshoplib.outputs.PIDSparkMax;
-import com.chopshop166.chopshoplib.sensors.PigeonGyro;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.chopshop166.chopshoplib.sensors.MockGyro;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.ControlType;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 import frc.outputs.SwerveModule;
 
@@ -28,11 +27,12 @@ public class SwerveBot extends RobotMap {
         // All Distances are in Meters
         // Front Left Module
         final PIDSparkMax frontLeftController = new PIDSparkMax(new CANSparkMax(1, MotorType.kBrushless));
+        final PIDSparkMax frontLeftSteering = new PIDSparkMax(2, MotorType.kBrushless);
         final CANCoder encoderFL = new CANCoder(1);
         encoderFL.configMagnetOffset(-36.0078125);
         SwerveModule.configureDriveMotor(frontLeftController);
         final SwerveModule frontLeft = new SwerveModule(new Translation2d(MODULE_OFFSET_XY, MODULE_OFFSET_XY),
-                encoderFL, new PIDSparkMax(new CANSparkMax(2, MotorType.kBrushless)), frontLeftController);
+                encoderFL, frontLeftSteering, frontLeftController);
 
         // Front Right Module
         final PIDSparkMax frontRightController = new PIDSparkMax(new CANSparkMax(3, MotorType.kBrushless));
@@ -62,7 +62,7 @@ public class SwerveBot extends RobotMap {
 
         final double maxRotationRadianPerSecond = Math.PI;
 
-        final GyroBase gyro = new PigeonGyro(new TalonSRX(1));
+        final GyroBase gyro = new MockGyro();
 
         return new DriveMap(frontLeft, frontRight, rearLeft, rearRight, maxDriveSpeedMetersPerSecond,
                 maxRotationRadianPerSecond, gyro);

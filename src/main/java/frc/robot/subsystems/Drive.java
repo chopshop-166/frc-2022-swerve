@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj.interfaces.Gyro;
 import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.outputs.SwerveModule;
 import frc.robot.maps.RobotMap.DriveMap;
@@ -56,6 +57,11 @@ public class Drive extends SmartSubsystemBase {
 
             // Now use this in our kinematics
             final SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(speeds);
+
+            SmartDashboard.putNumber("FL", moduleStates[0].speedMetersPerSecond);
+            SmartDashboard.putNumber("FR", moduleStates[1].speedMetersPerSecond);
+            SmartDashboard.putNumber("RL", moduleStates[2].speedMetersPerSecond);
+            SmartDashboard.putNumber("RR", moduleStates[3].speedMetersPerSecond);
 
             // Front left module state
             frontLeft.setDesiredState(moduleStates[0]);
