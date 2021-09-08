@@ -21,6 +21,7 @@ public class SwerveModule {
     private static final double GEAR_RATIO = 1 / 6.86;
     private static final double WHEEL_DIAMETER_M = Units.inchesToMeters(4);
 
+    private final String name;
     private final Translation2d location;
     private final CANCoder steeringEncoder;
     private final SmartMotorController steeringController;
@@ -31,8 +32,9 @@ public class SwerveModule {
     private static final double K_I = 0.0;
     private static final double K_D = 0.0;
 
-    public SwerveModule(final Translation2d moduleLocation, final CANCoder steeringEncoder,
+    public SwerveModule(final String name, final Translation2d moduleLocation, final CANCoder steeringEncoder,
             final SmartMotorController steeringController, final SmartMotorController driveController) {
+        this.name = name;
         this.location = moduleLocation;
         this.steeringEncoder = steeringEncoder;
         this.steeringController = steeringController;
@@ -63,9 +65,10 @@ public class SwerveModule {
         steeringController.set(angleOutput);
 
         // Set the drive motor output speed
-        driveController.setSetpoint(state.speedMetersPerSecond / ((GEAR_RATIO * Math.PI * WHEEL_DIAMETER_M) / 60));
-        SmartDashboard.putNumber(location.toString(), driveController.get());
-        SmartDashboard.putNumber(location.toString() + "set", state.speedMetersPerSecond);
+        driveController.setSetpoint(state.speedMetersPerSecond);
+        SmartDashboard.putNumber(name + " set speed", state.speedMetersPerSecond);
+        SmartDashboard.putNumber(name + " controller output", driveController.get());
+        SmartDashboard.putNumber(name + " EncoderVelocity", driveController.getEncoder().getRate());
     }
 
     /**
