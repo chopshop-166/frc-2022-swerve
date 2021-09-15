@@ -7,6 +7,7 @@ package frc.robot.subsystems;
 import java.util.function.DoubleSupplier;
 
 import com.chopshop166.chopshoplib.commands.SmartSubsystemBase;
+import com.chopshop166.chopshoplib.outputs.Modifier;
 
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.interfaces.Gyro;
@@ -48,9 +49,12 @@ public class Drive extends SmartSubsystemBase {
             final DoubleSupplier rotation) {
         return running("Field Centric Drive", () -> {
             // Need to convert inputs from -1..1 scale to m/s
-            final double translateXSpeed = translateX.getAsDouble() * maxDriveSpeedMetersPerSecond;
-            final double translateYSpeed = translateY.getAsDouble() * maxDriveSpeedMetersPerSecond;
-            final double rotationSpeed = rotation.getAsDouble() * maxRotationRadiansPerSecond;
+            final Modifier deadband = Modifier.deadband(0.1);
+            final double translateXSpeed = deadband.applyAsDouble(translateX.getAsDouble())
+                    * maxDriveSpeedMetersPerSecond;
+            final double translateYSpeed = deadband.applyAsDouble(translateY.getAsDouble())
+                    * maxDriveSpeedMetersPerSecond;
+            final double rotationSpeed = deadband.applyAsDouble(rotation.getAsDouble()) * maxRotationRadiansPerSecond;
 
             final ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(translateXSpeed, translateYSpeed,
                     rotationSpeed, Rotation2d.fromDegrees(gyro.getAngle()));

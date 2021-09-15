@@ -25,16 +25,16 @@ public class RobotMap {
 
         public DriveMap() {
 
-            this.frontLeft = new SwerveModule(new Translation2d(0.381, 0.381), new CANCoder(0),
+            this.frontLeft = new SwerveModule("Front Left", new Translation2d(0.381, 0.381), new CANCoder(0),
                     new SmartMotorController(), new SmartMotorController());
 
-            this.frontRight = new SwerveModule(new Translation2d(0.381, -0.381), new CANCoder(1),
+            this.frontRight = new SwerveModule("Front Right", new Translation2d(0.381, -0.381), new CANCoder(1),
                     new SmartMotorController(), new SmartMotorController());
 
-            this.rearLeft = new SwerveModule(new Translation2d(-0.381, 0.381), new CANCoder(2),
+            this.rearLeft = new SwerveModule("Rear Left", new Translation2d(-0.381, 0.381), new CANCoder(2),
                     new SmartMotorController(), new SmartMotorController());
 
-            this.rearRight = new SwerveModule(new Translation2d(-0.381, -0.381), new CANCoder(3),
+            this.rearRight = new SwerveModule("Rear Right", new Translation2d(-0.381, -0.381), new CANCoder(3),
                     new SmartMotorController(), new SmartMotorController());
 
             this.maxDriveSpeedMetersPerSecond = 2;
