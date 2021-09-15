@@ -56,7 +56,7 @@ public class Drive extends SmartSubsystemBase {
                     * maxDriveSpeedMetersPerSecond;
             final double rotationSpeed = deadband.applyAsDouble(rotation.getAsDouble()) * maxRotationRadiansPerSecond;
 
-            final ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(translateXSpeed, translateYSpeed,
+            final ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(translateYSpeed, translateXSpeed,
                     rotationSpeed, Rotation2d.fromDegrees(gyro.getAngle()));
 
             // Now use this in our kinematics
