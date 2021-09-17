@@ -28,9 +28,9 @@ public class SwerveModule {
     private final PIDController steeringPID;
     private final SmartMotorController driveController;
 
-    private static final double K_P = 0.0031;
-    private static final double K_I = 0.0;
-    private static final double K_D = 0.0;
+    private static final double K_P = 0.0046;
+    private static final double K_I = 0.003;
+    private static final double K_D = 0.00;
 
     public SwerveModule(final String name, final Translation2d moduleLocation, final CANCoder steeringEncoder,
             final SmartMotorController steeringController, final SmartMotorController driveController) {
@@ -99,7 +99,7 @@ public class SwerveModule {
         // https: // docs.revrobotics.com/sparkmax/operating-modes/closed-loop-control
         pid.setP(0.451);
         pid.setI(0);
-        pid.setD(0.58);
+        pid.setD(0.59);
         pid.setFF(0.219);
 
         // Return the original object so this can be chained

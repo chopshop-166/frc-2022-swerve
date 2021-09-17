@@ -28,7 +28,7 @@ public class SwerveBot extends RobotMap {
         // Front Left Module
         final PIDSparkMax frontLeftController = new PIDSparkMax(new CANSparkMax(1, MotorType.kBrushless));
         final CANCoder encoderFL = new CANCoder(1);
-        encoderFL.configMagnetOffset(-36.0078125 - 90);
+        encoderFL.configMagnetOffset(-36.0078125);
         encoderFL.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
         SwerveModule.configureDriveMotor(frontLeftController);
         final SwerveModule frontLeft = new SwerveModule("Front Left",
@@ -38,7 +38,7 @@ public class SwerveBot extends RobotMap {
         // Front Right Module
         final PIDSparkMax frontRightController = new PIDSparkMax(new CANSparkMax(3, MotorType.kBrushless));
         final CANCoder encoderFR = new CANCoder(2);
-        encoderFR.configMagnetOffset(-293.02734375000006 - 90);
+        encoderFR.configMagnetOffset(-293.02734375000006);
         encoderFR.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
         SwerveModule.configureDriveMotor(frontRightController);
         final SwerveModule frontRight = new SwerveModule("Front Right",
@@ -48,7 +48,7 @@ public class SwerveBot extends RobotMap {
         // Rear Left Module
         final PIDSparkMax rearLeftController = new PIDSparkMax(new CANSparkMax(5, MotorType.kBrushless));
         final CANCoder encoderRL = new CANCoder(3);
-        encoderRL.configMagnetOffset(-102.6562 - 90);
+        encoderRL.configMagnetOffset(-102.6562);
         encoderRL.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
         SwerveModule.configureDriveMotor(rearLeftController);
         final SwerveModule rearLeft = new SwerveModule("Rear Left",
@@ -58,7 +58,7 @@ public class SwerveBot extends RobotMap {
         // Rear Right Module
         final PIDSparkMax rearRightController = new PIDSparkMax(new CANSparkMax(7, MotorType.kBrushless));
         final CANCoder encoderRR = new CANCoder(4);
-        encoderRR.configMagnetOffset(-269.121 - 90);
+        encoderRR.configMagnetOffset(-269.121);
         encoderRR.configAbsoluteSensorRange(AbsoluteSensorRange.Unsigned_0_to_360);
         SwerveModule.configureDriveMotor(rearRightController);
         final SwerveModule rearRight = new SwerveModule("Rear Right",
