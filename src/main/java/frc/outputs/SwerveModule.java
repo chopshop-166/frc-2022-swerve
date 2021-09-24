@@ -28,9 +28,9 @@ public class SwerveModule {
     private final PIDController steeringPID;
     private final SmartMotorController driveController;
 
-    private static final double K_P = 0.0046;
-    private static final double K_I = 0.003;
-    private static final double K_D = 0.00;
+    private static final double K_P = 0.0043;
+    private static final double K_I = 0.00;
+    private static final double K_D = 0.0001;
 
     public SwerveModule(final String name, final Translation2d moduleLocation, final CANCoder steeringEncoder,
             final SmartMotorController steeringController, final SmartMotorController driveController) {
@@ -64,15 +64,16 @@ public class SwerveModule {
         // advantage of the Cancoder
         final double angleOutput = steeringPID.calculate(getAngle().getDegrees(), state.angle.getDegrees());
         steeringController.set(angleOutput);
-        SmartDashboard.putNumber(name + " set angle", state.angle.getDegrees());
-        SmartDashboard.putNumber(name + " real angle", getAngle().getDegrees());
+        SmartDashboard.putNumber(name + " Angle error", steeringPID.getPositionError());
 
         // Set the drive motor output speed
-
-        driveController.setSetpoint(state.speedMetersPerSecond);
-        SmartDashboard.putNumber(name + " set speed", state.speedMetersPerSecond);
-        SmartDashboard.putNumber(name + " controller output", driveController.get());
-        SmartDashboard.putNumber(name + " EncoderVelocity", driveController.getEncoder().getRate());
+        if (state.speedMetersPerSecond == 0) {
+            ((PIDSparkMax) driveController).getPidController().setIAccum(0);
+        }
+        // driveController.setSetpoint(state.speedMetersPerSecond);
+        SmartDashboard.putNumber(name + " Speed Error",
+                state.speedMetersPerSecond - driveController.getEncoder().getRate());
+        SmartDashboard.putNumber(name + " Speed", driveController.getEncoder().getRate());
     }
 
     /**
@@ -97,9 +98,9 @@ public class SwerveModule {
 
         // Configure PID
         // https: // docs.revrobotics.com/sparkmax/operating-modes/closed-loop-control
-        pid.setP(0.451);
-        pid.setI(0);
-        pid.setD(0.59);
+        pid.setP(0.0);
+        pid.setI(0.00015);
+        pid.setD(0.0);
         pid.setFF(0.219);
 
         // Return the original object so this can be chained
