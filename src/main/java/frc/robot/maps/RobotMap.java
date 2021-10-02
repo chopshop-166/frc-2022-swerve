@@ -1,13 +1,18 @@
 package frc.robot.maps;
 
 import com.chopshop166.chopshoplib.maps.RobotMapFor;
+import com.chopshop166.chopshoplib.outputs.IDSolenoid;
+import com.chopshop166.chopshoplib.outputs.MockDSolenoid;
+import com.chopshop166.chopshoplib.outputs.MockSpeedController;
 import com.chopshop166.chopshoplib.outputs.SmartMotorController;
+import com.chopshop166.chopshoplib.outputs.WDSolenoid;
 import com.chopshop166.chopshoplib.sensors.MockGyro;
 import com.ctre.phoenix.sensors.CANCoder;
 
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import frc.outputs.SwerveModule;
+import frc.robot.subsystems.Intake;
 
 // Need to get MAC address for roborio
 @RobotMapFor("Default")
@@ -96,4 +101,31 @@ public class RobotMap {
         return new DriveMap();
     }
 
+    public static class IntakeMap {
+        private final IDSolenoid piston;
+        private final SmartMotorController motor;
+
+        public IntakeMap(final IDSolenoid piston, final SmartMotorController motor) {
+            this.piston = piston;
+            this.motor = motor;
+        }
+
+        public IntakeMap() {
+            this(new MockDSolenoid(), new SmartMotorController());
+        }
+
+        // Forward should deploy intake
+        public IDSolenoid getPiston() {
+            return piston;
+        }
+
+        // Forward should intake ball
+        public SmartMotorController getMotor() {
+            return motor;
+        }
+    }
+
+    public IntakeMap getIntakeMap() {
+        return new IntakeMap();
+    }
 }

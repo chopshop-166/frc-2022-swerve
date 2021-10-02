@@ -2,10 +2,12 @@ package frc.robot.maps;
 
 import com.chopshop166.chopshoplib.maps.RobotMapFor;
 import com.chopshop166.chopshoplib.outputs.PIDSparkMax;
+import com.chopshop166.chopshoplib.outputs.WDSolenoid;
 import com.chopshop166.chopshoplib.sensors.MockGyro;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax;
+import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
 import edu.wpi.first.wpilibj.GyroBase;
@@ -73,6 +75,30 @@ public class SwerveBot extends RobotMap {
 
         return new DriveMap(frontLeft, frontRight, rearLeft, rearRight, maxDriveSpeedMetersPerSecond,
                 maxRotationRadianPerSecond, gyro);
+    }
+
+    @Override
+    public IntakeMap getIntakeMap() {
+        // Create intake motor, and configure encoder
+        final PIDSparkMax motor = new PIDSparkMax(9, MotorType.kBrushless);
+        var rawMotor = motor.getMotorController();
+        // Set current limit on the motor to avoid damaging anything if a ball gets
+        // jammed
+        rawMotor.setSmartCurrentLimit(20);
+        // Set motor to brake mode so any balls that are partially in the intake don't
+        // roll out
+        rawMotor.setIdleMode(IdleMode.kBrake);
+        // Configure Encoder scaling
+        final var encoder = motor.getEncoder();
+        // Intake has 2.5:1 gear reduction
+        final double reduction = 1 / 2.5;
+        // Velocity is in roller RPM
+        encoder.setVelocityScaleFactor(reduction);
+        // Position is in roller rotations
+        encoder.setPositionScaleFactor(reduction);
+
+        final WDSolenoid piston = new WDSolenoid(0, 1);
+        return new IntakeMap(piston, motor);
     }
 
 }

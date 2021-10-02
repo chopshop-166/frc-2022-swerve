@@ -13,6 +13,7 @@ import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.maps.RobotMap;
 import frc.robot.subsystems.Drive;
+import frc.robot.subsystems.Intake;
 import io.github.oblarg.oblog.Logger;
 
 /**
@@ -34,6 +35,7 @@ public class Robot extends CommandRobot {
     final private RobotMap map = getRobotMap(RobotMap.class, "frc.robot.maps", new RobotMap());
 
     private final Drive drive = new Drive(map.getDriveMap());
+    private final Intake intake = new Intake(map.getIntakeMap());
 
     /**
      * This function sets up each controller to have the appropriate button mappings
