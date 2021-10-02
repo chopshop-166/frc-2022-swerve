@@ -1,44 +1,95 @@
 package frc.robot.maps;
 
+import com.chopshop166.chopshoplib.maps.RobotMapFor;
+import com.chopshop166.chopshoplib.outputs.SmartMotorController;
 import com.chopshop166.chopshoplib.sensors.MockGyro;
+import com.ctre.phoenix.sensors.CANCoder;
 
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
+import frc.outputs.SwerveModule;
 
+// Need to get MAC address for roborio
+@RobotMapFor("Default")
 public class RobotMap {
     public static class DriveMap {
-        // Locations for the swerve drive modules relative to the robot center.
-        // Distances are in Meter
+        // All Distances are in Meters
 
-        public Translation2d frontLeftLocation() {
-            return new Translation2d(0.381, 0.381);
+        private final SwerveModule frontLeft;
+        private final SwerveModule frontRight;
+        private final SwerveModule rearLeft;
+        private final SwerveModule rearRight;
+        private final double maxDriveSpeedMetersPerSecond;
+        private final double maxRotationRadianPerSecond;
+        private final GyroBase gyro;
+
+        public DriveMap() {
+
+            this.frontLeft = new SwerveModule("Front Left", new Translation2d(0.381, 0.381), new CANCoder(0),
+                    new SmartMotorController(), new SmartMotorController());
+
+            this.frontRight = new SwerveModule("Front Right", new Translation2d(0.381, -0.381), new CANCoder(1),
+                    new SmartMotorController(), new SmartMotorController());
+
+            this.rearLeft = new SwerveModule("Rear Left", new Translation2d(-0.381, 0.381), new CANCoder(2),
+                    new SmartMotorController(), new SmartMotorController());
+
+            this.rearRight = new SwerveModule("Rear Right", new Translation2d(-0.381, -0.381), new CANCoder(3),
+                    new SmartMotorController(), new SmartMotorController());
+
+            this.maxDriveSpeedMetersPerSecond = 2;
+
+            this.maxRotationRadianPerSecond = Math.PI;
+
+            this.gyro = new MockGyro();
         }
 
-        public Translation2d frontRightLocation() {
-            return new Translation2d(0.381, -0.381);
+        public DriveMap(final SwerveModule frontLeft, final SwerveModule frontRight, final SwerveModule rearLeft,
+                final SwerveModule rearRight, final double maxDriveSpeedMetersPerSecond,
+                final double maxRotationRadianPerSecond, final GyroBase gyro) {
+
+            this.frontLeft = frontLeft;
+
+            this.frontRight = frontRight;
+
+            this.rearLeft = rearLeft;
+
+            this.rearRight = rearRight;
+
+            this.maxDriveSpeedMetersPerSecond = maxDriveSpeedMetersPerSecond;
+
+            this.maxRotationRadianPerSecond = maxRotationRadianPerSecond;
+
+            this.gyro = gyro;
         }
 
-        public Translation2d rearLeftLocation() {
-            return new Translation2d(-0.381, 0.381);
+        public SwerveModule getFrontLeft() {
+            return frontLeft;
         }
 
-        public Translation2d rearRightLocation() {
-            return new Translation2d(-0.381, -0.381);
+        public SwerveModule getFrontRight() {
+            return frontRight;
         }
 
-        public double maxDriveSpeedMetersPerSecond() {
-            return 2;
+        public SwerveModule getRearLeft() {
+            return rearLeft;
         }
 
-        public double maxRotationRadianPerSecond() {
-            return 2 * Math.PI;
+        public SwerveModule getRearRight() {
+            return rearRight;
         }
 
-        public GyroBase gyro() {
-            return new MockGyro();
+        public double getMaxDriveSpeedMetersPerSecond() {
+            return maxDriveSpeedMetersPerSecond;
         }
 
+        public double getMaxRotationRadianPerSecond() {
+            return maxRotationRadianPerSecond;
+        }
+
+        public GyroBase getGyro() {
+            return gyro;
+        }
     }
 
     public DriveMap getDriveMap() {

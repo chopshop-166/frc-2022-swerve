@@ -5,10 +5,14 @@
 package frc.robot;
 
 import com.chopshop166.chopshoplib.commands.CommandRobot;
+import com.chopshop166.chopshoplib.controls.ButtonXboxController;
 
+import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import frc.robot.maps.RobotMap;
+import frc.robot.subsystems.Drive;
 import io.github.oblarg.oblog.Logger;
 
 /**
@@ -24,10 +28,38 @@ public class Robot extends CommandRobot {
 
     final private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
+    final private ButtonXboxController driveController = new ButtonXboxController(0);
+
+    // Robot map initalization
+    final private RobotMap map = getRobotMap(RobotMap.class, "frc.robot.maps", new RobotMap());
+
+    private final Drive drive = new Drive(map.getDriveMap());
+
     /**
      * This function sets up each controller to have the appropriate button mappings
      */
-    private void configureButtonBindings() {
+    @Override
+    public void configureButtonBindings() {
+        // No button bindings yet
+    }
+
+    @Override
+    public void populateDashboard() {
+        // TODO: Define dashboard
+    }
+
+    /**
+     *
+     */
+    @Override
+    public void setDefaultCommands() {
+        drive.setDefaultCommand(drive.fieldCentricDrive(() -> driveController.getX(Hand.kLeft),
+                () -> driveController.getY(Hand.kLeft), () -> driveController.getX(Hand.kRight)));
+    }
+
+    @Override
+    public void populateAutonomous() {
+        // TODO: Define autonomous
     }
 
     /**
@@ -38,7 +70,6 @@ public class Robot extends CommandRobot {
     public void robotInit() {
         super.robotInit();
         Logger.configureLoggingAndConfig(this, false);
-        configureButtonBindings();
     }
 
     @Override
