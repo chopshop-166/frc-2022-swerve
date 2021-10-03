@@ -125,4 +125,23 @@ public class RobotMap {
     public IntakeMap getIntakeMap() {
         return new IntakeMap();
     }
+    public static class SpindexerMap {
+        private final SmartMotorController motor;
+
+        public SpindexerMap(final SmartMotorController motor) {
+            this.motor = motor;
+        }
+
+        public SpindexerMap() {
+            this(new SmartMotorController());
+        }
+
+        public SmartMotorController getMotor() {
+            return motor;
+        }
+    }
+
+    public SpindexerMap getSpindexerMap() {
+        return new SpindexerMap();
+    }
 }
