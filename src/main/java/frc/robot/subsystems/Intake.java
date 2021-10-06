@@ -59,5 +59,6 @@ public class Intake extends SmartSubsystemBase {
     @Override
     public void reset() {
         motor.getEncoder().reset();
+        motor.set(0);
     }
 }
