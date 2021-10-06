@@ -58,16 +58,6 @@ public class Spindexer extends SmartSubsystemBase {
     @Override
     public void reset() {
         encoder.reset();
-    }
-
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
-        // Use this for any background processing
-    }
-
-    @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run during simulation
+        motor.set(0);
     }
 }
