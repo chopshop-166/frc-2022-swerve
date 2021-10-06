@@ -6,7 +6,6 @@ import com.chopshop166.chopshoplib.outputs.WDSolenoid;
 import com.chopshop166.chopshoplib.sensors.MockGyro;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
-import com.revrobotics.CANSparkMax;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -80,8 +79,8 @@ public class SwerveBot extends RobotMap {
     @Override
     public IntakeMap getIntakeMap() {
         // Create intake motor, and configure encoder
-        final PIDSparkMax motor = new PIDSparkMax(9, MotorType.kBrushless);
-        var rawMotor = motor.getMotorController();
+        final var motor = new PIDSparkMax(9, MotorType.kBrushless);
+        final var rawMotor = motor.getMotorController();
         // Set current limit on the motor to avoid damaging anything if a ball gets
         // jammed
         rawMotor.setSmartCurrentLimit(20);

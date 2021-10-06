@@ -17,14 +17,15 @@ import edu.wpi.first.wpilibj2.command.WaitUntilCommand;
 import frc.robot.maps.RobotMap.IntakeMap;
 
 public class Intake extends SmartSubsystemBase {
-    private final double INTAKE_SPEED = 0.75;
-    private final double INTAKE_DEPLOY_SPEED = 0.2;
-    private final double INTAKE_DEPLOY_ROTATIONS = 1;
+    private final static double INTAKE_SPEED = 0.75;
+    private final static double INTAKE_DEPLOY_SPEED = 0.2;
+    private final static double INTAKE_DEPLOY_ROTATIONS = 1;
 
     private final IDSolenoid piston;
     private final SmartMotorController motor;
 
     public Intake(final IntakeMap map) {
+        super();
         piston = map.getPiston();
         motor = map.getMotor();
     }
@@ -58,16 +59,5 @@ public class Intake extends SmartSubsystemBase {
     @Override
     public void reset() {
         motor.getEncoder().reset();
-    }
-
-    @Override
-    public void periodic() {
-        // This method will be called once per scheduler run
-        // Use this for any background processing
-    }
-
-    @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run during simulation
     }
 }
