@@ -4,6 +4,7 @@ import com.chopshop166.chopshoplib.maps.RobotMapFor;
 import com.chopshop166.chopshoplib.outputs.PIDSparkMax;
 import com.chopshop166.chopshoplib.outputs.WDSolenoid;
 import com.chopshop166.chopshoplib.sensors.MockGyro;
+import com.chopshop166.chopshoplib.sensors.WDigitalInput;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -140,5 +141,30 @@ public class SwerveBot extends RobotMap {
         ballSensor.setLimitsVoltage(1.0, 1.5);
 
         return new KickerMap(motor, ballSensor::getTriggerState);
+    }
+    @Override
+    public TurretMap getTurretMap() {
+        final double GEAR_RATIO = 1 / 177.08;
+        // Forward corresponds to clockwise rotation of the turret
+        final var motor = new PIDSparkMax(12, MotorType.kBrushless);
+        final var rawMotor = motor.getMotorController();
+        // We want to be able to manually rotate the turret when disabled
+        rawMotor.setIdleMode(IdleMode.kCoast);
+        // Probably need to tune this, but we don't want to push to hard if the turret
+        // is stuck. JVN calculator estimates 8A with highly conservative inputs
+        rawMotor.setSmartCurrentLimit(8);
+        // Limit how fast we change speed to ensure we don't accelerate suddenly
+        rawMotor.setOpenLoopRampRate(1);
+        // Configure Encoder Conversion factor so values are in degress rotation of the
+        // turret
+        final var encoder = motor.getEncoder();
+        encoder.setPositionScaleFactor(GEAR_RATIO * 360);
+        encoder.setVelocityScaleFactor(GEAR_RATIO * 360);
+
+        // Limit switch represents a known angle on the turret
+        // Limit switch returns true when turret hits it
+        final var limitSwitch = new WDigitalInput(0);
+
+        return new TurretMap(motor, limitSwitch);
     }
 }

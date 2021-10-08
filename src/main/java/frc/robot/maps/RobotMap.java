@@ -128,6 +128,7 @@ public class RobotMap {
     public IntakeMap getIntakeMap() {
         return new IntakeMap();
     }
+
     public static class SpindexerMap {
         private final SmartMotorController motor;
 
@@ -171,5 +172,31 @@ public class RobotMap {
 
     public KickerMap getKickerMap() {
         return new KickerMap();
+    }
+
+    public static class TurretMap {
+        private final SmartMotorController motor;
+        private final BooleanSupplier limitSwitch;
+
+        public TurretMap(SmartMotorController motor, BooleanSupplier limitSwitch) {
+            this.motor = motor;
+            this.limitSwitch = limitSwitch;
+        }
+
+        public TurretMap() {
+            this(new SmartMotorController(), new MockDigitalInput());
+        }
+
+        public SmartMotorController getMotor() {
+            return motor;
+        }
+
+        public BooleanSupplier getLimitSwitch() {
+            return limitSwitch;
+        }
+    }
+
+    public TurretMap getTurretMap() {
+        return new TurretMap();
     }
 }
