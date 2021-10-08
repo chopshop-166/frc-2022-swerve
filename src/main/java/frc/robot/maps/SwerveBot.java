@@ -100,4 +100,27 @@ public class SwerveBot extends RobotMap {
         return new IntakeMap(piston, motor);
     }
 
+    @Override
+    public SpindexerMap getSpindexerMap() {
+        // Gear box introduces reduction
+        final double GEAR_RATIO = 1 / 55.61;
+
+        final PIDSparkMax motor = new PIDSparkMax(10, MotorType.kBrushless);
+        final var rawMotor = motor.getMotorController();
+        // Configure ramp rate to limit current draw
+        rawMotor.setOpenLoopRampRate(0.5);
+        // Configure Current limit to ensure we don't push too hard if something gets
+        // jammed
+        rawMotor.setSmartCurrentLimit(20);
+        // We don't need the spindexer to hold it's position when disabled
+        rawMotor.setIdleMode(IdleMode.kCoast);
+
+        // Configure encoder distance scaling
+        final var encoder = motor.getEncoder();
+        encoder.setPositionScaleFactor(GEAR_RATIO);
+        encoder.setVelocityScaleFactor(GEAR_RATIO);
+
+        return new SpindexerMap(motor);
+    }
+
 }

@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj2.command.CommandScheduler;
 import frc.robot.maps.RobotMap;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Spindexer;
 import io.github.oblarg.oblog.Logger;
 
 /**
@@ -36,6 +37,8 @@ public class Robot extends CommandRobot {
 
     private final Drive drive = new Drive(map.getDriveMap());
     private final Intake intake = new Intake(map.getIntakeMap());
+
+    private final Spindexer spindexer = new Spindexer(map.getSpindexerMap());
 
     /**
      * This function sets up each controller to have the appropriate button mappings
