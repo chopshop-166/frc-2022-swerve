@@ -9,6 +9,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
+import edu.wpi.first.wpilibj.AnalogTrigger;
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.util.Units;
@@ -123,4 +124,21 @@ public class SwerveBot extends RobotMap {
         return new SpindexerMap(motor);
     }
 
+    @Override
+    public KickerMap getKickerMap() {
+        final double GEAR_RATIO = 1 / 6;
+        final PIDSparkMax motor = new PIDSparkMax(11, MotorType.kBrushless);
+        final var rawMotor = motor.getMotorController();
+        // Limit current to ensure we don't push too hard if we jam
+        rawMotor.setSmartCurrentLimit(10);
+        final var encoder = motor.getEncoder();
+        encoder.setPositionScaleFactor(GEAR_RATIO);
+        encoder.setVelocityScaleFactor(GEAR_RATIO);
+
+        final AnalogTrigger ballSensor = new AnalogTrigger(0);
+        // TODO Find the correct voltages for whatever sensor we use
+        ballSensor.setLimitsVoltage(1.0, 1.5);
+
+        return new KickerMap(motor, ballSensor::getTriggerState);
+    }
 }

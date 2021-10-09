@@ -15,6 +15,7 @@ import frc.robot.maps.RobotMap;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Spindexer;
+import frc.robot.subsystems.Kicker;
 import io.github.oblarg.oblog.Logger;
 
 /**
@@ -39,6 +40,8 @@ public class Robot extends CommandRobot {
     private final Intake intake = new Intake(map.getIntakeMap());
 
     private final Spindexer spindexer = new Spindexer(map.getSpindexerMap());
+
+    private final Kicker kicker = new Kicker(map.getKickerMap());
 
     /**
      * This function sets up each controller to have the appropriate button mappings

@@ -1,9 +1,12 @@
 package frc.robot.maps;
 
+import java.util.function.BooleanSupplier;
+
 import com.chopshop166.chopshoplib.maps.RobotMapFor;
 import com.chopshop166.chopshoplib.outputs.IDSolenoid;
 import com.chopshop166.chopshoplib.outputs.MockDSolenoid;
 import com.chopshop166.chopshoplib.outputs.SmartMotorController;
+import com.chopshop166.chopshoplib.sensors.MockDigitalInput;
 import com.chopshop166.chopshoplib.sensors.MockGyro;
 import com.ctre.phoenix.sensors.CANCoder;
 
@@ -143,5 +146,30 @@ public class RobotMap {
 
     public SpindexerMap getSpindexerMap() {
         return new SpindexerMap();
+    }
+    public static class KickerMap {
+        SmartMotorController motor;
+        BooleanSupplier ballSensor;
+
+        public KickerMap(SmartMotorController motor, BooleanSupplier ballSensor) {
+            this.motor = motor;
+            this.ballSensor = ballSensor;
+        }
+
+        public KickerMap() {
+            this(new SmartMotorController(), new MockDigitalInput()::getAsBoolean);
+        }
+
+        public SmartMotorController getMotor() {
+            return motor;
+        }
+
+        public BooleanSupplier getBallSensor() {
+            return ballSensor;
+        }
+    }
+
+    public KickerMap getKickerMap() {
+        return new KickerMap();
     }
 }
