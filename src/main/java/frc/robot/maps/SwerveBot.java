@@ -5,6 +5,8 @@ import com.chopshop166.chopshoplib.outputs.PIDSparkMax;
 import com.chopshop166.chopshoplib.outputs.WDSolenoid;
 import com.chopshop166.chopshoplib.sensors.MockGyro;
 import com.chopshop166.chopshoplib.sensors.WDigitalInput;
+import com.chopshop166.chopshoplib.sensors.PigeonGyro;
+import com.ctre.phoenix.motorcontrol.can.TalonSRX;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.revrobotics.CANSparkMax.IdleMode;
@@ -72,7 +74,7 @@ public class SwerveBot extends RobotMap {
 
         final double maxRotationRadianPerSecond = Math.PI;
 
-        final GyroBase gyro = new MockGyro();
+        final GyroBase gyro = new PigeonGyro(new TalonSRX(5));
 
         return new DriveMap(frontLeft, frontRight, rearLeft, rearRight, maxDriveSpeedMetersPerSecond,
                 maxRotationRadianPerSecond, gyro);
@@ -99,7 +101,8 @@ public class SwerveBot extends RobotMap {
         encoder.setPositionScaleFactor(reduction);
 
         final WDSolenoid piston = new WDSolenoid(0, 1);
-        return new IntakeMap(piston, motor);
+        // return new IntakeMap(piston, motor);
+        return new IntakeMap();
     }
 
     @Override
@@ -122,7 +125,8 @@ public class SwerveBot extends RobotMap {
         encoder.setPositionScaleFactor(GEAR_RATIO);
         encoder.setVelocityScaleFactor(GEAR_RATIO);
 
-        return new SpindexerMap(motor);
+        // return new SpindexerMap(motor);
+        return new SpindexerMap();
     }
 
     @Override
@@ -140,8 +144,10 @@ public class SwerveBot extends RobotMap {
         // TODO Find the correct voltages for whatever sensor we use
         ballSensor.setLimitsVoltage(1.0, 1.5);
 
-        return new KickerMap(motor, ballSensor::getTriggerState);
+        // return new KickerMap(motor, ballSensor::getTriggerState);
+        return new KickerMap();
     }
+
     @Override
     public TurretMap getTurretMap() {
         final double GEAR_RATIO = 1 / 177.08;
@@ -165,6 +171,7 @@ public class SwerveBot extends RobotMap {
         // Limit switch returns true when turret hits it
         final var limitSwitch = new WDigitalInput(0);
 
-        return new TurretMap(motor, limitSwitch);
+        // return new TurretMap(motor, limitSwitch);
+        return new TurretMap();
     }
 }

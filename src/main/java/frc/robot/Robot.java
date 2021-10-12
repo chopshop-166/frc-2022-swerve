@@ -8,6 +8,7 @@ import com.chopshop166.chopshoplib.commands.CommandRobot;
 import com.chopshop166.chopshoplib.controls.ButtonXboxController;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
+import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
@@ -48,6 +49,7 @@ public class Robot extends CommandRobot {
      */
     @Override
     public void configureButtonBindings() {
+        driveController.getButton(Button.kStart).whenPressed(drive.resetGyro());
         // No button bindings yet
     }
 

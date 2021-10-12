@@ -20,6 +20,11 @@ public class SwerveModule {
     // Overall gear ratio for the swerve module drive motor
     private static final double GEAR_RATIO = 1 / 6.86;
     private static final double WHEEL_DIAMETER_M = Units.inchesToMeters(4);
+    private static final double K_P = 0.0043;
+    private static final double K_I = 0.00;
+    private static final double K_D = 0.0001;
+    private static final double K_I_STEADY_STATE = 0.0035;
+    private static final double I_TRANSITION_POINT = 5;
 
     private final String name;
     private final Translation2d location;
@@ -28,9 +33,7 @@ public class SwerveModule {
     private final PIDController steeringPID;
     private final SmartMotorController driveController;
 
-    private static final double K_P = 0.0043;
-    private static final double K_I = 0.00;
-    private static final double K_D = 0.0001;
+    private double previousSpeed = 0;
 
     public SwerveModule(final String name, final Translation2d moduleLocation, final CANCoder steeringEncoder,
             final SmartMotorController steeringController, final SmartMotorController driveController) {
@@ -66,11 +69,20 @@ public class SwerveModule {
         steeringController.set(angleOutput);
         SmartDashboard.putNumber(name + " Angle error", steeringPID.getPositionError());
 
+        // Changes the K_I as the angle error gets small
+        if (Math.abs(steeringPID.getPositionError()) <= I_TRANSITION_POINT) {
+            steeringPID.setI(K_I_STEADY_STATE);
+        } else {
+            steeringPID.setI(K_I);
+        }
+
         // Set the drive motor output speed
-        if (state.speedMetersPerSecond == 0) {
+        if (state.speedMetersPerSecond == 0 && previousSpeed != 0) {
             ((PIDSparkMax) driveController).getPidController().setIAccum(0);
         }
-        // driveController.setSetpoint(state.speedMetersPerSecond);
+        previousSpeed = state.speedMetersPerSecond;
+
+        driveController.setSetpoint(state.speedMetersPerSecond);
         SmartDashboard.putNumber(name + " Speed Error",
                 state.speedMetersPerSecond - driveController.getEncoder().getRate());
         SmartDashboard.putNumber(name + " Speed", driveController.getEncoder().getRate());
