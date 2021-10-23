@@ -108,7 +108,7 @@ public class SwerveBot extends RobotMap {
     @Override
     public SpindexerMap getSpindexerMap() {
         // Gear box introduces reduction
-        final double GEAR_RATIO = 1 / 55.61;
+        final double GEAR_RATIO = 1 / 56.02;
 
         final PIDSparkMax motor = new PIDSparkMax(10, MotorType.kBrushless);
         final var rawMotor = motor.getMotorController();
