@@ -174,4 +174,68 @@ public class SwerveBot extends RobotMap {
         // return new TurretMap(motor, limitSwitch);
         return new TurretMap();
     }
+
+    @Override
+    public ShooterMap getShooterMap() {
+        // Conversion to RPM of shooter wheel
+        final double SHOOTER_GEAR_RATIO = 1 / 1.5;
+        // Conversion to RPM of roller wheel
+        final double ROLLER_GEAR_RATIO = 1 / 2;
+        // Conversion to angle of hood
+        final double HOOD_GEAR_RATIO = 1 / 81;
+
+        final PIDSparkMax shooterA = new PIDSparkMax(13, MotorType.kBrushless);
+        final PIDSparkMax shooterB = new PIDSparkMax(14, MotorType.kBrushless);
+
+        final var rawMotorA = shooterA.getMotorController();
+        final var encoderA = shooterA.getEncoder();
+        final var pidA = shooterA.getPidController();
+        final var rawMotorB = shooterB.getMotorController();
+
+        // Shooter Motor Configuration
+        rawMotorA.setIdleMode(IdleMode.kCoast);
+        rawMotorB.setIdleMode(IdleMode.kCoast);
+        rawMotorB.follow(rawMotorA, true);
+        encoderA.setPositionScaleFactor(SHOOTER_GEAR_RATIO);
+        encoderA.setVelocityScaleFactor(SHOOTER_GEAR_RATIO);
+        // Tune these values
+        pidA.setFF(0);
+        pidA.setP(0);
+        pidA.setI(0);
+        pidA.setD(0);
+
+        final PIDSparkMax roller = new PIDSparkMax(15, MotorType.kBrushless);
+        final var rawRoller = roller.getMotorController();
+        final var rollerEncoder = roller.getEncoder();
+        final var rollerPID = roller.getPidController();
+
+        rawRoller.setIdleMode(IdleMode.kCoast);
+        rollerEncoder.setPositionScaleFactor(ROLLER_GEAR_RATIO);
+        rollerEncoder.setPositionScaleFactor(ROLLER_GEAR_RATIO);
+        // Tune these values (probably just FF as this doesn't need to be precise)
+        rollerPID.setFF(0);
+        rollerPID.setP(0);
+        rollerPID.setI(0);
+        rollerPID.setD(0);
+
+        final PIDSparkMax hood = new PIDSparkMax(16, MotorType.kBrushless);
+        final var rawHood = hood.getMotorController();
+        final var hoodEncoder = hood.getEncoder();
+        final var hoodPID = hood.getPidController();
+
+        rawHood.setIdleMode(IdleMode.kCoast);
+        // Arbitrary current at this point to prevent motor burning out
+        // Vex testing shows NEO 550 can sustain 20A for an entire match
+        rawHood.setSmartCurrentLimit(20);
+        hoodEncoder.setPositionScaleFactor(HOOD_GEAR_RATIO);
+        hoodEncoder.setVelocityScaleFactor(HOOD_GEAR_RATIO);
+        // Tune these values
+        hoodPID.setFF(0);
+        hoodPID.setP(0);
+        hoodPID.setI(0);
+        hoodPID.setD(0);
+
+        // return new ShooterMap(shooterA, roller, hood);
+        return new ShooterMap();
+    }
 }

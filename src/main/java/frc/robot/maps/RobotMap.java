@@ -13,6 +13,7 @@ import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import frc.outputs.SwerveModule;
+import frc.robot.subsystems.Shooter;
 
 // Need to get MAC address for roborio
 @RobotMapFor("Default")
@@ -148,6 +149,7 @@ public class RobotMap {
     public SpindexerMap getSpindexerMap() {
         return new SpindexerMap();
     }
+
     public static class KickerMap {
         SmartMotorController motor;
         BooleanSupplier ballSensor;
@@ -198,5 +200,37 @@ public class RobotMap {
 
     public TurretMap getTurretMap() {
         return new TurretMap();
+    }
+
+    public static class ShooterMap {
+        SmartMotorController motor;
+        SmartMotorController roller;
+        SmartMotorController hood;
+
+        public ShooterMap(SmartMotorController motor, SmartMotorController roller, SmartMotorController hood) {
+            this.motor = motor;
+            this.roller = roller;
+            this.hood = hood;
+        }
+
+        public ShooterMap() {
+            this(new SmartMotorController(), new SmartMotorController(), new SmartMotorController());
+        }
+
+        public SmartMotorController getMotor() {
+            return motor;
+        }
+
+        public SmartMotorController getRoller() {
+            return roller;
+        }
+
+        public SmartMotorController getHood() {
+            return hood;
+        }
+    }
+
+    public ShooterMap getShooterMap() {
+        return new ShooterMap();
     }
 }
