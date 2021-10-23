@@ -235,6 +235,7 @@ public class SwerveBot extends RobotMap {
         hoodPID.setI(0);
         hoodPID.setD(0);
 
-        return new ShooterMap(shooterA, roller, hood);
+        // return new ShooterMap(shooterA, roller, hood);
+        return new ShooterMap();
     }
 }
