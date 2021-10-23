@@ -13,7 +13,6 @@ import com.ctre.phoenix.sensors.CANCoder;
 import edu.wpi.first.wpilibj.GyroBase;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import frc.outputs.SwerveModule;
-import frc.robot.subsystems.Shooter;
 
 // Need to get MAC address for roborio
 @RobotMapFor("Default")
