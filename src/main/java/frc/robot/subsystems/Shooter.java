@@ -38,32 +38,16 @@ public class Shooter extends SmartSubsystemBase {
     }
 
     public CommandBase spinUpToSpeed(String name, DoubleSupplier speed) {
-        CommandBase cmd = new CommandBase() {
-            {
-                addRequirements(Shooter.this);
-            }
-            PersistenceCheck check = new PersistenceCheck(5, () -> {
-                return (Math.abs(shooterEncoder.getRate() - Math.min(speed.getAsDouble(), MAX_SPEED)) <= 50.0);
-            });
-            // The roller check is less restrictive as it should have less impact on the
-            // shot
-            PersistenceCheck rollerCheck = new PersistenceCheck(5, () -> {
-                return (Math.abs(rollerEncoder.getRate() - ROLLER_SPEED) <= 200.0);
-            });
-
-            @Override
-            public void initialize() {
-                shooter.setSetpoint(Math.min(speed.getAsDouble(), MAX_SPEED));
-                check.reset();
-            }
-
-            @Override
-            public boolean isFinished() {
-                return check.getAsBoolean() && rollerCheck.getAsBoolean();
-            }
-        };
-        cmd.setName(name);
-        return cmd;
+        final PersistenceCheck check = new PersistenceCheck(5,
+                () -> Math.abs(shooterEncoder.getRate() - Math.min(speed.getAsDouble(), MAX_SPEED)) <= 50.0);
+        // The roller check is less restrictive as it should have less impact
+        final PersistenceCheck rollerCheck = new PersistenceCheck(5,
+                () -> Math.abs(rollerEncoder.getRate() - ROLLER_SPEED) <= 200.0);
+        return initAndWait(name, () -> {
+            shooter.setSetpoint(Math.min(speed.getAsDouble(), MAX_SPEED));
+            check.reset();
+            rollerCheck.reset();
+        }, () -> check.getAsBoolean() && rollerCheck.getAsBoolean());
     }
 
     public CommandBase speedUpForTrenchShot() {
