@@ -4,7 +4,6 @@
 
 package frc.robot.subsystems;
 
-import java.util.List;
 import com.google.common.math.Stats;
 
 import com.chopshop166.chopshoplib.SampleBuffer;
@@ -32,20 +31,20 @@ public class Vision extends SmartSubsystemBase {
     }
 
     // Driver Mode turns off the limelight.
-    public CommandBase DriverMode(final boolean toggle) {
-        return instant("DriverMode", () -> {
+    public CommandBase driverMode(final boolean toggle) {
+        return instant("driverMode", () -> {
             camera.setDriverMode(toggle);
         });
     }
 
-    double getDistance() {
+    public double getDistance() {
         var result = camera.getLatestResult();
         PhotonTrackedTarget target = result.getBestTarget();
         return PhotonUtils.calculateDistanceToTargetMeters(CAMERA_HEIGHT_METERS, TARGET_HEIGHT_METERS,
                 CAMERA_PITCH_RADIANS, target.getPitch());
     }
 
-    double getRotation(double lastSpeed) {
+    public double getRotation(double lastSpeed) {
         var result = camera.getLatestResult();
         PhotonTrackedTarget target = result.getBestTarget();
         double skew = target.getSkew();
@@ -62,11 +61,5 @@ public class Vision extends SmartSubsystemBase {
     @Override
     public void periodic() {
         latency.addSample(camera.getLatestResult().getLatencyMillis() / 1000.0);
-    }
-
-    @Override
-    public void simulationPeriodic() {
-        // This method will be called once per scheduler run during simulation
-
     }
 }
