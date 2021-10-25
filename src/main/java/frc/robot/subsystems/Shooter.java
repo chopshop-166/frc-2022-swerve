@@ -37,6 +37,27 @@ public class Shooter extends SmartSubsystemBase {
         hood = map.getHood();
     }
 
+    public enum shooterSpeeds {
+        SpitOutSpeed(2000, "Spit Out"), InitiationLine(3500, "Initiation Line"), TrenchShot(4500, "Trench Shot"),
+        MAX_SPEED(8500, "Max Speed");
+
+        private double speedRPM;
+        private String name;
+
+        public double value() {
+            return this.speedRPM;
+        }
+
+        public String getName() {
+            return this.name;
+        }
+
+        private shooterSpeeds(double speedRPM, String name) {
+            this.speedRPM = speedRPM;
+            this.name = name;
+        }
+    }
+
     public CommandBase spinUpToSpeed(String name, DoubleSupplier speed) {
         final PersistenceCheck check = new PersistenceCheck(5,
                 () -> Math.abs(shooterEncoder.getRate() - Math.min(speed.getAsDouble(), MAX_SPEED)) <= 50.0);
@@ -50,12 +71,8 @@ public class Shooter extends SmartSubsystemBase {
         }, () -> check.getAsBoolean() && rollerCheck.getAsBoolean());
     }
 
-    public CommandBase speedUpForTrenchShot() {
-        return spinUpToSpeed("Trench Shot", () -> TRENCH_SHOT_SPEED);
-    }
-
-    public CommandBase speedUpForInitiationLine() {
-        return spinUpToSpeed("Initiation Line", () -> INITIATION_LINE_SPEED);
+    public CommandBase spinUpToSpeed(shooterSpeeds speed) {
+        return spinUpToSpeed(speed.getName(), speed::value);
     }
 
     // Stop Motor instead of setting to 0 so that it spins down on its own
@@ -64,10 +81,6 @@ public class Shooter extends SmartSubsystemBase {
             shooter.stopMotor();
             roller.stopMotor();
         });
-    }
-
-    public CommandBase spitOutBall() {
-        return spinUpToSpeed("Spit Out", () -> SPIT_OUT_SPEED);
     }
 
     // Get estimated distance to the target and calculate the shooter speed

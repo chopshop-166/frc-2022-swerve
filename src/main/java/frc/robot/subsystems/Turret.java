@@ -88,6 +88,12 @@ public class Turret extends SmartSubsystemBase {
         return moveToAngle(FORWARD_POSITION);
     }
 
+    public CommandBase slowRotate(final boolean clockwise) {
+        return startEnd("Rotate Turret", () -> {
+            motor.set(clockwise ? ZERO_SPEED_TWO : -ZERO_SPEED_TWO);
+        }, () -> motor.set(0));
+    }
+
     // Simple Bang-Bang position control
     // If this doesn't work well we can investigate using PID
     public CommandBase moveToAngle(double angle) {

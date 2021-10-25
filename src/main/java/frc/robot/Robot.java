@@ -6,16 +6,22 @@ package frc.robot;
 
 import com.chopshop166.chopshoplib.commands.CommandRobot;
 import com.chopshop166.chopshoplib.controls.ButtonXboxController;
+import com.chopshop166.chopshoplib.controls.ButtonXboxController.Direction;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.Command;
+import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.CommandScheduler;
+import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.maps.RobotMap;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Spindexer;
+import frc.robot.subsystems.Turret;
+import frc.robot.subsystems.Shooter.shooterSpeeds;
 import frc.robot.subsystems.Kicker;
 import frc.robot.subsystems.Shooter;
 import io.github.oblarg.oblog.Logger;
@@ -45,7 +51,13 @@ public class Robot extends CommandRobot {
 
     private final Kicker kicker = new Kicker(map.getKickerMap());
 
+    private final Turret turret = new Turret(map.getTurretMap());
+
     private final Shooter shooter = new Shooter(map.getShooterMap());
+
+    public CommandBase shootPowerCell(Shooter.shooterSpeeds speed) {
+        return sequence(speed.getName(), shooter.spinUpToSpeed(speed), kicker.KickToShoot(1));
+    }
 
     /**
      * This function sets up each controller to have the appropriate button mappings
@@ -53,12 +65,32 @@ public class Robot extends CommandRobot {
     @Override
     public void configureButtonBindings() {
         driveController.getButton(Button.kStart).whenPressed(drive.resetGyro());
-        // No button bindings yet
+        driveController.getButton(Button.kA)
+                .whileHeld(parallel("Intake", intake.runIntake(true), spindexer.washerMachine()));
+        // Shooter mappings
+        driveController.getButton(Button.kB).whileHeld(shootPowerCell(shooterSpeeds.InitiationLine))
+                .whenReleased(shooter.spinDown());
+        driveController.getButton(Button.kX).whileHeld(shootPowerCell(shooterSpeeds.TrenchShot))
+                .whenReleased(shooter.spinDown());
+
+        // Turret mappings
+        driveController.getButton(Button.kBumperRight).whileHeld(turret.slowRotate(true));
+        driveController.getButton(Button.kBumperLeft).whileHeld(turret.slowRotate(false));
+
+        // Secondary functions mapped to the dpad
+        driveController.getPovButton(Direction.Left).whileHeld(intake.runIntake(false));
+        driveController.getPovButton(Direction.Up).whileHeld(shootPowerCell(shooterSpeeds.SpitOutSpeed))
+                .whenReleased(shooter.spinDown());
+        driveController.getPovButton(Direction.Right).whileHeld(spindexer.washerMachine());
     }
 
     @Override
     public void populateDashboard() {
-        // TODO: Define dashboard
+        // Add Intake commands
+        SmartDashboard.putData("Extend Intake", intake.extendIntake());
+        SmartDashboard.putData("Retract Intake", intake.retractIntake());
+        SmartDashboard.putData("Deploy Intake", intake.deployIntake());
+
     }
 
     /**
@@ -72,7 +104,8 @@ public class Robot extends CommandRobot {
 
     @Override
     public void populateAutonomous() {
-        // TODO: Define autonomous
+        autoChooser.setDefaultOption("Initialize Systems",
+                new SequentialCommandGroup(intake.deployIntake(), turret.zeroTurret()));
     }
 
     /**
