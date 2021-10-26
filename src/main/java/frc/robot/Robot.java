@@ -74,8 +74,8 @@ public class Robot extends CommandRobot {
                 .whenReleased(shooter.spinDown());
 
         // Turret mappings
-        driveController.getButton(Button.kBumperRight).whileHeld(turret.slowRotate(true));
-        driveController.getButton(Button.kBumperLeft).whileHeld(turret.slowRotate(false));
+        driveController.getButton(Button.kBumperRight).whileHeld(turret.slowRotate(Turret.Direction.CLOCKWISE));
+        driveController.getButton(Button.kBumperLeft).whileHeld(turret.slowRotate(Turret.Direction.COUNTERCLOCKWISE));
 
         // Secondary functions mapped to the dpad
         driveController.getPovButton(Direction.Left).whileHeld(intake.runIntake(false));

@@ -32,6 +32,10 @@ public class Turret extends SmartSubsystemBase {
     private final IEncoder encoder;
     private final BooleanSupplier limitSwitch;
 
+    public static enum Direction {
+        CLOCKWISE, COUNTERCLOCKWISE
+    }
+
     public Turret(final TurretMap map) {
         motor = map.getMotor();
         encoder = motor.getEncoder();
@@ -88,9 +92,9 @@ public class Turret extends SmartSubsystemBase {
         return moveToAngle(FORWARD_POSITION);
     }
 
-    public CommandBase slowRotate(final boolean clockwise) {
+    public CommandBase slowRotate(final Direction direction) {
         return startEnd("Rotate Turret", () -> {
-            motor.set(clockwise ? ZERO_SPEED_TWO : -ZERO_SPEED_TWO);
+            motor.set(direction == Direction.CLOCKWISE ? ZERO_SPEED_TWO : -ZERO_SPEED_TWO);
         }, () -> motor.set(0));
     }
 
