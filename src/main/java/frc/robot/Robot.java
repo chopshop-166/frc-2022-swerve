@@ -65,8 +65,8 @@ public class Robot extends CommandRobot {
     @Override
     public void configureButtonBindings() {
         driveController.getButton(Button.kStart).whenPressed(drive.resetGyro());
-        driveController.getButton(Button.kA)
-                .whileHeld(parallel("Intake", intake.runIntake(true), spindexer.washerMachine()));
+        driveController.getButton(Button.kA).whileHeld(intake.runIntake(true)).whileHeld(spindexer.washerMachine())
+                .whenReleased(spindexer.stop());
         // Shooter mappings
         driveController.getButton(Button.kB).whileHeld(shootPowerCell(shooterSpeeds.InitiationLine))
                 .whenReleased(shooter.spinDown());
@@ -82,6 +82,7 @@ public class Robot extends CommandRobot {
         driveController.getPovButton(Direction.Up).whileHeld(shootPowerCell(shooterSpeeds.SpitOutSpeed))
                 .whenReleased(shooter.spinDown());
         driveController.getPovButton(Direction.Right).whileHeld(spindexer.washerMachine());
+        driveController.getPovButton(Direction.Down).whileHeld(kicker.runKicker());
     }
 
     @Override

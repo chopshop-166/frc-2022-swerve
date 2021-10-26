@@ -3,12 +3,11 @@ package frc.robot.maps;
 import com.chopshop166.chopshoplib.maps.RobotMapFor;
 import com.chopshop166.chopshoplib.outputs.PIDSparkMax;
 import com.chopshop166.chopshoplib.outputs.WDSolenoid;
-import com.chopshop166.chopshoplib.sensors.MockGyro;
-import com.chopshop166.chopshoplib.sensors.WDigitalInput;
 import com.chopshop166.chopshoplib.sensors.PigeonGyro;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.chopshop166.chopshoplib.sensors.WDigitalInput;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 
@@ -74,7 +73,7 @@ public class SwerveBot extends RobotMap {
 
         final double maxRotationRadianPerSecond = Math.PI;
 
-        final GyroBase gyro = new PigeonGyro(new TalonSRX(5));
+        final GyroBase gyro = new PigeonGyro(new PigeonIMU(5));
 
         return new DriveMap(frontLeft, frontRight, rearLeft, rearRight, maxDriveSpeedMetersPerSecond,
                 maxRotationRadianPerSecond, gyro);
@@ -101,8 +100,7 @@ public class SwerveBot extends RobotMap {
         encoder.setPositionScaleFactor(reduction);
 
         final WDSolenoid piston = new WDSolenoid(0, 1);
-        // return new IntakeMap(piston, motor);
-        return new IntakeMap();
+        return new IntakeMap(piston, motor);
     }
 
     @Override
@@ -125,8 +123,7 @@ public class SwerveBot extends RobotMap {
         encoder.setPositionScaleFactor(GEAR_RATIO);
         encoder.setVelocityScaleFactor(GEAR_RATIO);
 
-        // return new SpindexerMap(motor);
-        return new SpindexerMap();
+        return new SpindexerMap(motor);
     }
 
     @Override
@@ -135,7 +132,7 @@ public class SwerveBot extends RobotMap {
         final PIDSparkMax motor = new PIDSparkMax(11, MotorType.kBrushless);
         final var rawMotor = motor.getMotorController();
         // Limit current to ensure we don't push too hard if we jam
-        rawMotor.setSmartCurrentLimit(10);
+        rawMotor.setSmartCurrentLimit(12);
         final var encoder = motor.getEncoder();
         encoder.setPositionScaleFactor(GEAR_RATIO);
         encoder.setVelocityScaleFactor(GEAR_RATIO);
@@ -144,8 +141,7 @@ public class SwerveBot extends RobotMap {
         // TODO Find the correct voltages for whatever sensor we use
         ballSensor.setLimitsVoltage(1.0, 1.5);
 
-        // return new KickerMap(motor, ballSensor::getTriggerState);
-        return new KickerMap();
+        return new KickerMap(motor, ballSensor::getTriggerState);
     }
 
     @Override
