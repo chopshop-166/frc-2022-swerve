@@ -40,6 +40,7 @@ public class Robot extends CommandRobot {
     final private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
     final private ButtonXboxController driveController = new ButtonXboxController(0);
+    final private ButtonXboxController copilotController = new ButtonXboxController(1);
 
     // Robot map initalization
     final private RobotMap map = getRobotMap(RobotMap.class, "frc.robot.maps", new RobotMap());
@@ -56,8 +57,7 @@ public class Robot extends CommandRobot {
     private final Shooter shooter = new Shooter(map.getShooterMap());
 
     public CommandBase shootPowerCell(Shooter.shooterSpeeds speed) {
-        return sequence(speed.getName(), shooter.spinUpToSpeed(speed),
-                parallel("Feed Ball", spindexer.spin(), kicker.runKicker(true)));
+        return sequence(speed.getName(), shooter.spinUpToSpeed(speed), kicker.startKicker(), spindexer.spin());
     }
 
     /**
@@ -70,7 +70,7 @@ public class Robot extends CommandRobot {
                 .whenReleased(spindexer.stop());
         // Shooter mappings
         driveController.getButton(Button.kB).whileHeld(shootPowerCell(shooterSpeeds.GoalBase))
-                .whenReleased(shooter.spinDown());
+                .whenReleased(parallel("Stop", shooter.spinDown(), kicker.stopKicker()));
         // driveController.getButton(Button.kX).whileHeld(shootPowerCell(shooterSpeeds.TrenchShot))
         // .whenReleased(shooter.spinDown());
 
@@ -84,6 +84,17 @@ public class Robot extends CommandRobot {
         driveController.getPovButton(Direction.Right).whileHeld(spindexer.washerMachine())
                 .whenReleased(spindexer.stop());
         driveController.getPovButton(Direction.Down).whileHeld(kicker.runKicker(false));
+
+        copilotController.getButton(Button.kA).whileHeld(intake.runIntake(true)).whileHeld(spindexer.washerMachine())
+                .whenReleased(spindexer.stop());
+        copilotController.getButton(Button.kY).whileHeld(intake.runIntake(false));
+
+        copilotController.getButton(Button.kBumperRight).whileHeld(turret.slowRotate(Turret.Direction.CLOCKWISE));
+        copilotController.getButton(Button.kBumperLeft).whileHeld(turret.slowRotate(Turret.Direction.COUNTERCLOCKWISE));
+        copilotController.getButton(Button.kB).whileHeld(shootPowerCell(shooterSpeeds.GoalBase))
+                .whenReleased(parallel("Stop", shooter.spinDown(), kicker.stopKicker()));
+        copilotController.getPovButton(Direction.Right).whileHeld(spindexer.washerMachine())
+                .whenReleased(spindexer.stop());
     }
 
     @Override
@@ -107,7 +118,11 @@ public class Robot extends CommandRobot {
 
     @Override
     public void populateAutonomous() {
-        autoChooser.setDefaultOption("Initialize Systems", new SequentialCommandGroup(intake.deployIntake()));
+        // autoChooser.setDefaultOption("Initialize Systems", new
+        // SequentialCommandGroup(intake.deployIntake()));
+        autoChooser.setDefaultOption("Do Nothing", instant("Do nothing", () -> {
+        }));
+        autoChooser.addOption("Driveoff", drive.driveDistanceY(5));
     }
 
     /**
@@ -141,7 +156,8 @@ public class Robot extends CommandRobot {
      */
     @Override
     public void autonomousInit() {
-        autonomousCommand = autoChooser.getSelected();
+        // autonomousCommand = autoChooser.getSelected();
+        autonomousCommand = drive.driveDistanceY(1.5);
 
         // schedule the autonomous command (example)
         if (autonomousCommand != null) {

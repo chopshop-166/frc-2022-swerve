@@ -88,7 +88,7 @@ public class SwerveBot extends RobotMap {
         final var rawMotor = motor.getMotorController();
         // Set current limit on the motor to avoid damaging anything if a ball gets
         // jammed
-        rawMotor.setSmartCurrentLimit(20);
+        rawMotor.setSmartCurrentLimit(30);
         // Set motor to brake mode so any balls that are partially in the intake don't
         // roll out
         rawMotor.setIdleMode(IdleMode.kBrake);

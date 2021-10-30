@@ -15,6 +15,7 @@ import edu.wpi.first.wpilibj.kinematics.ChassisSpeeds;
 import edu.wpi.first.wpilibj.kinematics.SwerveDriveKinematics;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.FunctionalCommand;
 import frc.outputs.SwerveModule;
 import frc.robot.maps.RobotMap.DriveMap;
 
@@ -46,33 +47,46 @@ public class Drive extends SmartSubsystemBase {
 
     public CommandBase fieldCentricDrive(final DoubleSupplier translateX, final DoubleSupplier translateY,
             final DoubleSupplier rotation) {
-        return running("Field Centric Drive", () -> {
-            // Need to convert inputs from -1..1 scale to m/s
-            final Modifier deadband = Modifier.deadband(0.1);
-            final double translateXSpeed = deadband.applyAsDouble(translateX.getAsDouble())
-                    * maxDriveSpeedMetersPerSecond;
-            final double translateYSpeed = deadband.applyAsDouble(translateY.getAsDouble())
-                    * maxDriveSpeedMetersPerSecond;
-            final double rotationSpeed = deadband.applyAsDouble(rotation.getAsDouble()) * maxRotationRadiansPerSecond;
+        return running("Field Centric Drive", () -> handleSwerve(translateX, translateY, rotation));
+    }
 
-            final ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(translateYSpeed, translateXSpeed,
-                    rotationSpeed, Rotation2d.fromDegrees(-gyro.getAngle()));
+    private void handleSwerve(final DoubleSupplier translateX, final DoubleSupplier translateY,
+            final DoubleSupplier rotation) {
+        // Need to convert inputs from -1..1 scale to m/s
+        final Modifier deadband = Modifier.deadband(0.1);
+        final double translateXSpeed = deadband.applyAsDouble(translateX.getAsDouble()) * maxDriveSpeedMetersPerSecond;
+        final double translateYSpeed = deadband.applyAsDouble(translateY.getAsDouble()) * maxDriveSpeedMetersPerSecond;
+        final double rotationSpeed = deadband.applyAsDouble(rotation.getAsDouble()) * maxRotationRadiansPerSecond;
 
-            // Now use this in our kinematics
-            final SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(speeds);
+        final ChassisSpeeds speeds = ChassisSpeeds.fromFieldRelativeSpeeds(translateYSpeed, translateXSpeed,
+                rotationSpeed, Rotation2d.fromDegrees(-gyro.getAngle()));
 
-            // Front left module state
-            frontLeft.setDesiredState(moduleStates[0]);
+        // Now use this in our kinematics
+        final SwerveModuleState[] moduleStates = kinematics.toSwerveModuleStates(speeds);
 
-            // Front right module state
-            frontRight.setDesiredState(moduleStates[1]);
+        // Front left module state
+        frontLeft.setDesiredState(moduleStates[0]);
 
-            // Back left module state
-            rearLeft.setDesiredState(moduleStates[2]);
+        // Front right module state
+        frontRight.setDesiredState(moduleStates[1]);
 
-            // Back right module state
-            rearRight.setDesiredState(moduleStates[3]);
-        });
+        // Back left module state
+        rearLeft.setDesiredState(moduleStates[2]);
+
+        // Back right module state
+        rearRight.setDesiredState(moduleStates[3]);
+    }
+
+    public CommandBase driveDistanceY(final double distance) {
+        return new FunctionalCommand(() -> {
+            frontLeft.resetDistance();
+        }, () -> {
+            handleSwerve(() -> 0, () -> Math.signum(distance) * 0.2, () -> 0);
+        }, (interrupted) -> {
+            handleSwerve(() -> 0, () -> 0, () -> 0);
+        }, () -> {
+            return Math.abs(frontLeft.getDistance()) >= Math.abs(distance);
+        }, this);
     }
 
     // Reset the gyro heading in case it has drifted significantly.

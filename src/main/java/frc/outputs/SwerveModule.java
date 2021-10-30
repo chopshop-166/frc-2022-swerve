@@ -124,6 +124,14 @@ public class SwerveModule {
         return Rotation2d.fromDegrees(steeringEncoder.getAbsolutePosition());
     }
 
+    public double getDistance() {
+        return driveController.getEncoder().getDistance();
+    }
+
+    public void resetDistance() {
+        driveController.getEncoder().reset();
+    }
+
     /**
      * Optimizes the desired module angle by taking into account the current module
      * angle

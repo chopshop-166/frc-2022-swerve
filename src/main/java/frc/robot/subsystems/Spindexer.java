@@ -15,7 +15,7 @@ import frc.robot.maps.RobotMap.SpindexerMap;
 
 public class Spindexer extends SmartSubsystemBase {
 
-    private final static double SPINDEXER_SPEED = 0.5;
+    private final static double SPINDEXER_SPEED = 0.3;
     private final static double WASHER_MACHINE_DISTANCE = 0.125;
     private final static double WASHER_MACHINE_SPEED = 0.4;
 
