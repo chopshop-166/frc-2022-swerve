@@ -10,7 +10,8 @@ import frc.robot.maps.RobotMap.KickerMap;
 
 public class Kicker extends SmartSubsystemBase {
 
-    private static double KICKER_SPEED = 0.75;
+    private static double KICKER_SPEED = 0.9;
+    private static double KICKER_SPEED_REVERSE = -0.5;
     private SmartMotorController motor;
     private BooleanSupplier ballSensor;
 
@@ -39,9 +40,9 @@ public class Kicker extends SmartSubsystemBase {
     }
 
     // Fallback command if the sensor isn't working
-    public CommandBase runKicker() {
+    public CommandBase runKicker(boolean up) {
         return startEnd("RunKicker", () -> {
-            motor.set(KICKER_SPEED);
+            motor.set(up ? KICKER_SPEED : KICKER_SPEED_REVERSE);
         }, () -> {
             motor.set(0);
         });

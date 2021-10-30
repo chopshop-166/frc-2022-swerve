@@ -10,6 +10,7 @@ import com.chopshop166.chopshoplib.commands.SmartSubsystemBase;
 import com.chopshop166.chopshoplib.outputs.SmartMotorController;
 import com.chopshop166.chopshoplib.sensors.IEncoder;
 
+import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.maps.RobotMap.TurretMap;
@@ -17,9 +18,9 @@ import frc.robot.maps.RobotMap.TurretMap;
 public class Turret extends SmartSubsystemBase {
 
     // Speed constants
-    private final static double ZERO_SPEED_ONE = 0.5;
-    private final static double ZERO_SPEED_TWO = 0.2;
-    private final static double AIMING_SPEED = 0.3;
+    private final static double ZERO_SPEED_ONE = 0.2;
+    private final static double ZERO_SPEED_TWO = 0.1;
+    private final static double AIMING_SPEED = 0.4;
 
     // Angle Constants
     private final static double STOW_POSITION = 90;
@@ -103,12 +104,12 @@ public class Turret extends SmartSubsystemBase {
     public CommandBase moveToAngle(double angle) {
         return functional("Move to " + angle, () -> {
         }, () -> {
-            double angleToMove = angle - encoder.getAbsolutePosition();
+            double angleToMove = angle - encoder.getDistance();
             motor.set(Math.signum(angleToMove) * AIMING_SPEED);
         }, (interrupted) -> {
             motor.set(0);
         }, () -> {
-            return Math.abs(angle - encoder.getAbsolutePosition()) <= POSITION_ERROR;
+            return Math.abs(angle - encoder.getDistance()) <= POSITION_ERROR;
         });
     }
 
@@ -116,8 +117,8 @@ public class Turret extends SmartSubsystemBase {
         // If the limit switch is pressed but we don't think we should be near the limit
         // switch than lets reset the encoder
         // We should also indicate to the driver that we should do a full zero procedure
-        if (limitSwitch.getAsBoolean() && (Math.abs(encoder.getAbsolutePosition()) > POSITION_ERROR)) {
-            encoder.reset();
+        if (limitSwitch.getAsBoolean() && (Math.abs(encoder.getDistance()) > POSITION_ERROR)) {
+            // encoder.reset();
             // TODO add indicator for the driver
         }
     }
@@ -125,10 +126,12 @@ public class Turret extends SmartSubsystemBase {
     @Override
     public void reset() {
         motor.set(0);
+        encoder.reset();
     }
 
     @Override
     public void periodic() {
         checkZero();
+        SmartDashboard.putNumber("Turret Angle", encoder.getDistance());
     }
 }
