@@ -52,7 +52,7 @@ public class Turret extends SmartSubsystemBase {
     }
 
     public CommandBase zeroTurretPhaseOne() {
-        return cmd("Zero Turret-1").onExec(() -> {
+        return cmd("Zero Turret-1").onExecute(() -> {
             // Turn clockwise direction towards the limit switch
             motor.set(ZERO_SPEED_ONE);
         }).onEnd((interrupted) -> {
@@ -60,29 +60,29 @@ public class Turret extends SmartSubsystemBase {
             // Reset the encoder once we've hit it
             // This may not be as precise
             encoder.reset();
-        }).finishedWhen(limitSwitch::getAsBoolean).build();
+        }).finishedWhen(limitSwitch::getAsBoolean);
     }
 
     public CommandBase zeroTurretPhaseTwo() {
-        return cmd("Zero Turret-2").onExec(() -> {
+        return cmd("Zero Turret-2").onExecute(() -> {
             // Turn counter-clockwise direction away from the limit switch
             motor.set(-ZERO_SPEED_TWO);
         }).onEnd((interrupted) -> {
             motor.set(0.0);
         }).finishedWhen(() -> {
             return !limitSwitch.getAsBoolean();
-        }).build();
+        });
     }
 
     public CommandBase zeroTurretPhaseThree() {
-        return cmd("Zero Turret-3").onExec(() -> {
+        return cmd("Zero Turret-3").onExecute(() -> {
             // Turn counter-clockwise direction away from the limit switch
             motor.set(ZERO_SPEED_TWO);
         }).onEnd((interrupted) -> {
             motor.set(0.0);
             // Reset the encoder again now that we've approached it slowly
             encoder.reset();
-        }).finishedWhen(limitSwitch::getAsBoolean).build();
+        }).finishedWhen(limitSwitch::getAsBoolean);
     }
 
     // Turn clockwise relatively quickly until turret hits limit switch

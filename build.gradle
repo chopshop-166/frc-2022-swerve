@@ -3,7 +3,7 @@ plugins {
     id "com.github.spotbugs" version "4.7.1"
     id "pmd"
     id "edu.wpi.first.GradleRIO" version "2021.3.1"
-    id "com.chopshop166.plugin" version "0.5"
+    id "com.chopshop166.plugin" version "0.7"
 }
 
 sourceCompatibility = JavaVersion.VERSION_11
@@ -50,7 +50,7 @@ repositories {
 }
 
 chopshop {
-    version = "2022.1.1-alpha2"
+    version = "2022.1.1-alpha3"
 }
 
 // Defining my dependencies. In this case, WPILib (+ friends), and vendor libraries.
@@ -89,7 +89,7 @@ sim {
 
 // Setting up my Jar File by adding the manifest so WPILib
 // knows where to look for our Robot Class.
-jar { manifest chopshop.manifest(ROBOT_MAIN_CLASS) }
+jar { chopshop.setupManifest(manifest, ROBOT_MAIN_CLASS) }
 
 tasks.withType(com.github.spotbugs.snom.SpotBugsTask) {
     reports {
