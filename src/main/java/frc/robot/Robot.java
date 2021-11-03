@@ -18,7 +18,7 @@ import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Spindexer;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Vision;
-import frc.robot.subsystems.Shooter.ShooterSpeeds;
+import frc.robot.subsystems.Shooter.Speed;
 import frc.robot.subsystems.Kicker;
 import frc.robot.subsystems.Shooter;
 import frc.utils.SpinDirection;
@@ -51,7 +51,7 @@ public class Robot extends CommandRobot {
 
     private final Shooter shooter = new Shooter(map.getShooterMap());
 
-    public CommandBase shootPowerCell(final ShooterSpeeds speed) {
+    public CommandBase shootPowerCell(final Speed speed) {
         return sequence(speed.getName(), shooter.spinUpToSpeed(speed), kicker.start(),
                 spindexer.spin(SpinDirection.CLOCKWISE));
     }
@@ -65,7 +65,7 @@ public class Robot extends CommandRobot {
         driveController.getButton(Button.kA).whileHeld(intake.runIntake(true)).whileHeld(spindexer.washerMachine())
                 .whenReleased(spindexer.stop());
         // Shooter mappings
-        driveController.getButton(Button.kB).whileHeld(shootPowerCell(ShooterSpeeds.GOAL_BASE))
+        driveController.getButton(Button.kB).whileHeld(shootPowerCell(Speed.GOAL_BASE))
                 .whenReleased(parallel("Stop", shooter.spinDown(), kicker.stop()));
 
         // Turret mappings
@@ -85,7 +85,7 @@ public class Robot extends CommandRobot {
 
         copilotController.getButton(Button.kBumperRight).whileHeld(turret.slowRotate(SpinDirection.CLOCKWISE));
         copilotController.getButton(Button.kBumperLeft).whileHeld(turret.slowRotate(SpinDirection.COUNTERCLOCKWISE));
-        copilotController.getButton(Button.kB).whileHeld(shootPowerCell(ShooterSpeeds.GOAL_BASE))
+        copilotController.getButton(Button.kB).whileHeld(shootPowerCell(Speed.GOAL_BASE))
                 .whenReleased(parallel("Stop", shooter.spinDown(), kicker.stop()));
         copilotController.getPovButton(Direction.Right).whileHeld(spindexer.spin(SpinDirection.CLOCKWISE))
                 .whenReleased(spindexer.stop());
@@ -99,7 +99,7 @@ public class Robot extends CommandRobot {
         SmartDashboard.putData("Extend Intake", intake.extendIntake());
         SmartDashboard.putData("Retract Intake", intake.retractIntake());
         SmartDashboard.putData("Deploy Intake", intake.deployIntake());
-        SmartDashboard.putData("ShootClose", shooter.spinUpToSpeed(ShooterSpeeds.GOAL_BASE));
+        SmartDashboard.putData("ShootClose", shooter.spinUpToSpeed(Speed.GOAL_BASE));
         SmartDashboard.putData("Rotate Forward", turret.aimForward());
     }
 

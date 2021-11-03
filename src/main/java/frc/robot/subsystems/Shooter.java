@@ -36,7 +36,7 @@ public class Shooter extends SmartSubsystemBase {
         hood = map.getHood();
     }
 
-    public enum ShooterSpeeds {
+    public enum Speed {
         SPIT_OUT(2000, "Spit Out"), GOAL_BASE(3300, "Goal Base"), INITIATION_LINE(3500, "Initiation Line"),
         TRENCH_SHOT(4500, "Trench Shot"), MAX_SPEED(8500, "Max Speed");
 
@@ -51,7 +51,7 @@ public class Shooter extends SmartSubsystemBase {
             return this.name;
         }
 
-        ShooterSpeeds(final double speedRPM, final String name) {
+        Speed(final double speedRPM, final String name) {
             this.speedRPM = speedRPM;
             this.name = name;
         }
@@ -71,7 +71,7 @@ public class Shooter extends SmartSubsystemBase {
         }, () -> check.getAsBoolean());// && rollerCheck.getAsBoolean());
     }
 
-    public CommandBase spinUpToSpeed(final ShooterSpeeds speed) {
+    public CommandBase spinUpToSpeed(final Speed speed) {
         return spinUpToSpeed(speed.getName(), speed::value);
     }
 

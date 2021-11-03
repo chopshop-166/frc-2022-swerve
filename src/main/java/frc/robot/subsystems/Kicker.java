@@ -2,12 +2,12 @@ package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
+import com.chopshop166.chopshoplib.commands.CommandRobot;
 import com.chopshop166.chopshoplib.commands.SmartSubsystemBase;
 import com.chopshop166.chopshoplib.outputs.SmartMotorController;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.InstantCommand;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.maps.RobotMap.KickerMap;
 
@@ -53,9 +53,9 @@ public class Kicker extends SmartSubsystemBase {
     }
 
     public CommandBase start() {
-        return new SequentialCommandGroup(new InstantCommand(() -> {
+        return CommandRobot.sequence("Start Kicker", new InstantCommand(() -> {
             motor.set(KICKER_SPEED);
-        }, this), new WaitCommand(1)).withName("Start Kicker");
+        }, this), new WaitCommand(1));
     }
 
     public CommandBase stop() {

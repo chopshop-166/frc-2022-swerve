@@ -180,7 +180,6 @@ public class SwerveBot extends RobotMap {
         limitSwitch.setInverted(true);
 
         return new TurretMap(motor, limitSwitch);
-        // return new TurretMap();
     }
 
     @Override
@@ -245,6 +244,5 @@ public class SwerveBot extends RobotMap {
         // hoodPID.setD(0);
 
         return new ShooterMap(shooterA, new SmartMotorController(), new SmartMotorController());
-        // return new ShooterMap();
     }
 }

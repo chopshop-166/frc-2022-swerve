@@ -69,7 +69,6 @@ public class Spindexer extends SmartSubsystemBase {
 
     @Override
     public void periodic() {
-        // TODO Auto-generated method stub
         super.periodic();
         SmartDashboard.putNumber("Enc", encoder.getDistance());
     }

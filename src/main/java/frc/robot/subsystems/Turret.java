@@ -112,9 +112,7 @@ public class Turret extends SmartSubsystemBase {
             motor.set(Math.signum(angleToMove) * AIMING_SPEED);
         }, (interrupted) -> {
             motor.set(0);
-        }, () -> {
-            return Math.abs(angle - encoder.getDistance()) <= POSITION_ERROR;
-        });
+        }, () -> Math.abs(angle - encoder.getDistance()) <= POSITION_ERROR);
     }
 
     private void checkZero() {
