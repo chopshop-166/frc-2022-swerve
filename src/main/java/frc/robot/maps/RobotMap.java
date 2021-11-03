@@ -150,10 +150,10 @@ public class RobotMap {
     }
 
     public static class KickerMap {
-        SmartMotorController motor;
-        BooleanSupplier ballSensor;
+        private final SmartMotorController motor;
+        private final BooleanSupplier ballSensor;
 
-        public KickerMap(SmartMotorController motor, BooleanSupplier ballSensor) {
+        public KickerMap(final SmartMotorController motor, final BooleanSupplier ballSensor) {
             this.motor = motor;
             this.ballSensor = ballSensor;
         }
@@ -179,7 +179,7 @@ public class RobotMap {
         private final SmartMotorController motor;
         private final BooleanSupplier limitSwitch;
 
-        public TurretMap(SmartMotorController motor, BooleanSupplier limitSwitch) {
+        public TurretMap(final SmartMotorController motor, final BooleanSupplier limitSwitch) {
             this.motor = motor;
             this.limitSwitch = limitSwitch;
         }
@@ -202,11 +202,12 @@ public class RobotMap {
     }
 
     public static class ShooterMap {
-        SmartMotorController motor;
-        SmartMotorController roller;
-        SmartMotorController hood;
+        private final SmartMotorController motor;
+        private final SmartMotorController roller;
+        private final SmartMotorController hood;
 
-        public ShooterMap(SmartMotorController motor, SmartMotorController roller, SmartMotorController hood) {
+        public ShooterMap(final SmartMotorController motor, final SmartMotorController roller,
+                final SmartMotorController hood) {
             this.motor = motor;
             this.roller = roller;
             this.hood = hood;

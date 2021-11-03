@@ -177,6 +177,7 @@ public class SwerveBot extends RobotMap {
         // Limit switch represents a known angle on the turret
         // Limit switch returns true when turret hits it
         final var limitSwitch = new WDigitalInput(0);
+        limitSwitch.setInverted(true);
 
         return new TurretMap(motor, limitSwitch);
         // return new TurretMap();

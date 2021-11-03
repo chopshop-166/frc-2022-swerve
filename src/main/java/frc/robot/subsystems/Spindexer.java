@@ -12,6 +12,7 @@ import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.maps.RobotMap.SpindexerMap;
+import frc.utils.SpinDirection;
 
 public class Spindexer extends SmartSubsystemBase {
 
@@ -34,9 +35,9 @@ public class Spindexer extends SmartSubsystemBase {
 
     // Rotates the Spindexer while command is running
     // Should be used in "raceWith" or similar to control
-    public CommandBase spin() {
+    public CommandBase spin(final SpinDirection dir) {
         return startEnd("SpinToShoot", () -> {
-            motor.set(SPINDEXER_SPEED);
+            motor.set(dir == SpinDirection.CLOCKWISE ? SPINDEXER_SPEED : -SPINDEXER_SPEED);
         }, () -> {
             motor.set(0);
         });

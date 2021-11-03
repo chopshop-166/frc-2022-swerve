@@ -10,21 +10,18 @@ import com.chopshop166.chopshoplib.controls.ButtonXboxController.Direction;
 
 import edu.wpi.first.wpilibj.GenericHID.Hand;
 import edu.wpi.first.wpilibj.XboxController.Button;
-import edu.wpi.first.wpilibj.smartdashboard.SendableChooser;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
-import edu.wpi.first.wpilibj2.command.Command;
 import edu.wpi.first.wpilibj2.command.CommandBase;
-import edu.wpi.first.wpilibj2.command.CommandScheduler;
-import edu.wpi.first.wpilibj2.command.SequentialCommandGroup;
 import frc.robot.maps.RobotMap;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Spindexer;
 import frc.robot.subsystems.Turret;
-import frc.robot.subsystems.Shooter.shooterSpeeds;
+import frc.robot.subsystems.Vision;
+import frc.robot.subsystems.Shooter.ShooterSpeeds;
 import frc.robot.subsystems.Kicker;
 import frc.robot.subsystems.Shooter;
-import io.github.oblarg.oblog.Logger;
+import frc.utils.SpinDirection;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -34,10 +31,6 @@ import io.github.oblarg.oblog.Logger;
  * project.
  */
 public class Robot extends CommandRobot {
-
-    private Command autonomousCommand;
-
-    final private SendableChooser<Command> autoChooser = new SendableChooser<>();
 
     final private ButtonXboxController driveController = new ButtonXboxController(0);
     final private ButtonXboxController copilotController = new ButtonXboxController(1);
@@ -52,12 +45,15 @@ public class Robot extends CommandRobot {
 
     private final Kicker kicker = new Kicker(map.getKickerMap());
 
-    private final Turret turret = new Turret(map.getTurretMap());
+    private final Vision vision = new Vision();
+
+    private final Turret turret = new Turret(map.getTurretMap(), vision);
 
     private final Shooter shooter = new Shooter(map.getShooterMap());
 
-    public CommandBase shootPowerCell(Shooter.shooterSpeeds speed) {
-        return sequence(speed.getName(), shooter.spinUpToSpeed(speed), kicker.startKicker(), spindexer.spin());
+    public CommandBase shootPowerCell(final ShooterSpeeds speed) {
+        return sequence(speed.getName(), shooter.spinUpToSpeed(speed), kicker.start(),
+                spindexer.spin(SpinDirection.CLOCKWISE));
     }
 
     /**
@@ -69,31 +65,31 @@ public class Robot extends CommandRobot {
         driveController.getButton(Button.kA).whileHeld(intake.runIntake(true)).whileHeld(spindexer.washerMachine())
                 .whenReleased(spindexer.stop());
         // Shooter mappings
-        driveController.getButton(Button.kB).whileHeld(shootPowerCell(shooterSpeeds.GoalBase))
-                .whenReleased(parallel("Stop", shooter.spinDown(), kicker.stopKicker()));
-        // driveController.getButton(Button.kX).whileHeld(shootPowerCell(shooterSpeeds.TrenchShot))
-        // .whenReleased(shooter.spinDown());
+        driveController.getButton(Button.kB).whileHeld(shootPowerCell(ShooterSpeeds.GOAL_BASE))
+                .whenReleased(parallel("Stop", shooter.spinDown(), kicker.stop()));
 
         // Turret mappings
-        driveController.getButton(Button.kBumperRight).whileHeld(turret.slowRotate(Turret.Direction.CLOCKWISE));
-        driveController.getButton(Button.kBumperLeft).whileHeld(turret.slowRotate(Turret.Direction.COUNTERCLOCKWISE));
+        driveController.getButton(Button.kBumperRight).whileHeld(turret.slowRotate(SpinDirection.CLOCKWISE));
+        driveController.getButton(Button.kBumperLeft).whileHeld(turret.slowRotate(SpinDirection.COUNTERCLOCKWISE));
 
         // Secondary functions mapped to the dpad
         driveController.getPovButton(Direction.Left).whileHeld(intake.runIntake(false));
-        driveController.getPovButton(Direction.Up).whileHeld(kicker.runKicker(true));
+        driveController.getPovButton(Direction.Up).whileHeld(kicker.run(true));
         driveController.getPovButton(Direction.Right).whileHeld(spindexer.washerMachine())
                 .whenReleased(spindexer.stop());
-        driveController.getPovButton(Direction.Down).whileHeld(kicker.runKicker(false));
+        driveController.getPovButton(Direction.Down).whileHeld(kicker.run(false));
 
         copilotController.getButton(Button.kA).whileHeld(intake.runIntake(true)).whileHeld(spindexer.washerMachine())
                 .whenReleased(spindexer.stop());
         copilotController.getButton(Button.kY).whileHeld(intake.runIntake(false));
 
-        copilotController.getButton(Button.kBumperRight).whileHeld(turret.slowRotate(Turret.Direction.CLOCKWISE));
-        copilotController.getButton(Button.kBumperLeft).whileHeld(turret.slowRotate(Turret.Direction.COUNTERCLOCKWISE));
-        copilotController.getButton(Button.kB).whileHeld(shootPowerCell(shooterSpeeds.GoalBase))
-                .whenReleased(parallel("Stop", shooter.spinDown(), kicker.stopKicker()));
-        copilotController.getPovButton(Direction.Right).whileHeld(spindexer.washerMachine())
+        copilotController.getButton(Button.kBumperRight).whileHeld(turret.slowRotate(SpinDirection.CLOCKWISE));
+        copilotController.getButton(Button.kBumperLeft).whileHeld(turret.slowRotate(SpinDirection.COUNTERCLOCKWISE));
+        copilotController.getButton(Button.kB).whileHeld(shootPowerCell(ShooterSpeeds.GOAL_BASE))
+                .whenReleased(parallel("Stop", shooter.spinDown(), kicker.stop()));
+        copilotController.getPovButton(Direction.Right).whileHeld(spindexer.spin(SpinDirection.CLOCKWISE))
+                .whenReleased(spindexer.stop());
+        copilotController.getPovButton(Direction.Left).whileHeld(spindexer.spin(SpinDirection.COUNTERCLOCKWISE))
                 .whenReleased(spindexer.stop());
     }
 
@@ -103,8 +99,8 @@ public class Robot extends CommandRobot {
         SmartDashboard.putData("Extend Intake", intake.extendIntake());
         SmartDashboard.putData("Retract Intake", intake.retractIntake());
         SmartDashboard.putData("Deploy Intake", intake.deployIntake());
-        SmartDashboard.putData("ShootClose", shooter.spinUpToSpeed(Shooter.shooterSpeeds.GoalBase));
-
+        SmartDashboard.putData("ShootClose", shooter.spinUpToSpeed(ShooterSpeeds.GOAL_BASE));
+        SmartDashboard.putData("Rotate Forward", turret.aimForward());
     }
 
     /**
@@ -118,67 +114,7 @@ public class Robot extends CommandRobot {
 
     @Override
     public void populateAutonomous() {
-        // autoChooser.setDefaultOption("Initialize Systems", new
-        // SequentialCommandGroup(intake.deployIntake()));
-        autoChooser.setDefaultOption("Do Nothing", instant("Do nothing", () -> {
-        }));
-        autoChooser.addOption("Driveoff", drive.driveDistanceY(5));
+        addAutonomous("Driveoff", drive.driveDistanceY(1.2));
     }
 
-    /**
-     * This function is run when the robot is first started up and should be used
-     * for any initialization code.
-     */
-    @Override
-    public void robotInit() {
-        super.robotInit();
-        Logger.configureLoggingAndConfig(this, false);
-    }
-
-    @Override
-    public void robotPeriodic() {
-        super.robotPeriodic();
-        Logger.updateEntries();
-    }
-
-    /**
-     * This function is called once each time the robot enters Disabled mode.
-     */
-    @Override
-    public void disabledInit() {
-        super.disabledInit();
-        CommandScheduler.getInstance().cancelAll();
-    }
-
-    /**
-     * This autonomous runs the autonomous command selected by your
-     * {@link RobotContainer} class.
-     */
-    @Override
-    public void autonomousInit() {
-        // autonomousCommand = autoChooser.getSelected();
-        autonomousCommand = drive.driveDistanceY(1.5);
-
-        // schedule the autonomous command (example)
-        if (autonomousCommand != null) {
-            autonomousCommand.schedule();
-        }
-    }
-
-    @Override
-    public void teleopInit() {
-        // This makes sure that the autonomous stops running when
-        // teleop starts running. If you want the autonomous to
-        // continue until interrupted by another command, remove
-        // this line or comment it out.
-        if (autonomousCommand != null) {
-            autonomousCommand.cancel();
-        }
-    }
-
-    @Override
-    public void testInit() {
-        // Cancels all running commands at the start of test mode.
-        CommandScheduler.getInstance().cancelAll();
-    }
 }

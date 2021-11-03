@@ -21,23 +21,24 @@ public class Shooter extends SmartSubsystemBase {
 
     private final static double ROLLER_SPEED = 3000;
 
-    private final SmartMotorController shooter;
+    private final SmartMotorController motor;
     private final IEncoder shooterEncoder;
     private final SmartMotorController roller;
     private final IEncoder rollerEncoder;
     private final SmartMotorController hood;
 
-    public Shooter(ShooterMap map) {
-        shooter = map.getMotor();
-        shooterEncoder = shooter.getEncoder();
+    public Shooter(final ShooterMap map) {
+        super();
+        motor = map.getMotor();
+        shooterEncoder = motor.getEncoder();
         roller = map.getRoller();
         rollerEncoder = roller.getEncoder();
         hood = map.getHood();
     }
 
-    public enum shooterSpeeds {
-        SpitOutSpeed(2000, "Spit Out"), GoalBase(3300, "Goal Base"), InitiationLine(3500, "Initiation Line"),
-        TrenchShot(4500, "Trench Shot"), MAX_SPEED(8500, "Max Speed");
+    public enum ShooterSpeeds {
+        SPIT_OUT(2000, "Spit Out"), GOAL_BASE(3300, "Goal Base"), INITIATION_LINE(3500, "Initiation Line"),
+        TRENCH_SHOT(4500, "Trench Shot"), MAX_SPEED(8500, "Max Speed");
 
         private double speedRPM;
         private String name;
@@ -50,34 +51,34 @@ public class Shooter extends SmartSubsystemBase {
             return this.name;
         }
 
-        private shooterSpeeds(double speedRPM, String name) {
+        ShooterSpeeds(final double speedRPM, final String name) {
             this.speedRPM = speedRPM;
             this.name = name;
         }
     }
 
-    public CommandBase spinUpToSpeed(String name, DoubleSupplier speed) {
+    public CommandBase spinUpToSpeed(final String name, final DoubleSupplier speed) {
         final PersistenceCheck check = new PersistenceCheck(5,
                 () -> Math.abs(shooterEncoder.getRate() - Math.min(speed.getAsDouble(), MAX_SPEED)) <= 100.0);
         // The roller check is less restrictive as it should have less impact
         // final PersistenceCheck rollerCheck = new PersistenceCheck(5,
         // () -> Math.abs(rollerEncoder.getRate() - ROLLER_SPEED) <= 200.0);
         return initAndWait(name, () -> {
-            shooter.setSetpoint(Math.min(speed.getAsDouble(), MAX_SPEED));
+            motor.setSetpoint(Math.min(speed.getAsDouble(), MAX_SPEED));
             SmartDashboard.putNumber("Setpoint", Math.min(speed.getAsDouble(), MAX_SPEED));
             check.reset();
             // rollerCheck.reset();
         }, () -> check.getAsBoolean());// && rollerCheck.getAsBoolean());
     }
 
-    public CommandBase spinUpToSpeed(shooterSpeeds speed) {
+    public CommandBase spinUpToSpeed(final ShooterSpeeds speed) {
         return spinUpToSpeed(speed.getName(), speed::value);
     }
 
     // Stop Motor instead of setting to 0 so that it spins down on its own
     public CommandBase spinDown() {
         return instant("Spin Down", () -> {
-            shooter.stopMotor();
+            motor.stopMotor();
             roller.stopMotor();
         });
     }
@@ -90,7 +91,7 @@ public class Shooter extends SmartSubsystemBase {
 
     @Override
     public void reset() {
-        shooter.stopMotor();
+        motor.stopMotor();
         roller.stopMotor();
         hood.stopMotor();
     }
