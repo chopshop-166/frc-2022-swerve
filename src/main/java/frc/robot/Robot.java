@@ -53,7 +53,11 @@ public class Robot extends CommandRobot {
 
     public CommandBase shootPowerCell(final Speed speed) {
         return sequence(speed.getName(), shooter.spinUpToSpeed(speed), kicker.start(),
-                spindexer.spin(SpinDirection.CLOCKWISE));
+                spindexer.spin(SpinDirection.COUNTERCLOCKWISE, Spindexer.Speeds.SHOOTING));
+    }
+
+    public CommandBase aimTurret() {
+        return sequence("Aim Turret", vision.driverMode(false), turret.aimTurret());
     }
 
     /**
@@ -81,16 +85,23 @@ public class Robot extends CommandRobot {
 
         copilotController.getButton(Button.kA).whileHeld(intake.runIntake(true)).whileHeld(spindexer.washerMachine())
                 .whenReleased(spindexer.stop());
+        copilotController.getButton(Button.kB).whileHeld(shootPowerCell(Speed.GOAL_BASE))
+                .whenReleased(parallel("Stop", shooter.spinDown(), kicker.stop()));
         copilotController.getButton(Button.kY).whileHeld(intake.runIntake(false));
+        copilotController.getButton(Button.kX).whileHeld(aimTurret()).whenReleased(vision.driverMode(true));
 
         copilotController.getButton(Button.kBumperRight).whileHeld(turret.slowRotate(SpinDirection.CLOCKWISE));
         copilotController.getButton(Button.kBumperLeft).whileHeld(turret.slowRotate(SpinDirection.COUNTERCLOCKWISE));
         copilotController.getButton(Button.kB).whileHeld(shootPowerCell(Speed.GOAL_BASE))
                 .whenReleased(parallel("Stop", shooter.spinDown(), kicker.stop()));
-        copilotController.getPovButton(Direction.Right).whileHeld(spindexer.spin(SpinDirection.CLOCKWISE))
+        copilotController.getPovButton(Direction.Right)
+                .whileHeld(spindexer.spin(SpinDirection.CLOCKWISE, Spindexer.Speeds.CLEARING))
                 .whenReleased(spindexer.stop());
-        copilotController.getPovButton(Direction.Left).whileHeld(spindexer.spin(SpinDirection.COUNTERCLOCKWISE))
+        copilotController.getPovButton(Direction.Left)
+                .whileHeld(spindexer.spin(SpinDirection.COUNTERCLOCKWISE, Spindexer.Speeds.CLEARING))
                 .whenReleased(spindexer.stop());
+        copilotController.getPovButton(Direction.Up).whileHeld(kicker.run(true));
+        copilotController.getPovButton(Direction.Down).whileHeld(kicker.run(false));
     }
 
     @Override

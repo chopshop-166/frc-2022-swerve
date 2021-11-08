@@ -118,7 +118,7 @@ public class SwerveBot extends RobotMap {
         rawMotor.setOpenLoopRampRate(0.5);
         // Configure Current limit to ensure we don't push too hard if something gets
         // jammed
-        rawMotor.setSmartCurrentLimit(20);
+        rawMotor.setSmartCurrentLimit(30);
         rawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
         rawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 40);
         // We don't need the spindexer to hold it's position when disabled
@@ -185,7 +185,7 @@ public class SwerveBot extends RobotMap {
     @Override
     public ShooterMap getShooterMap() {
         // Conversion to RPM of shooter wheel
-        final double SHOOTER_GEAR_RATIO = 1 / 1.5;
+        final double SHOOTER_GEAR_RATIO = 1.5;
         // Conversion to RPM of roller wheel
         final double ROLLER_GEAR_RATIO = 1 / 2;
         // Conversion to angle of hood
@@ -207,8 +207,8 @@ public class SwerveBot extends RobotMap {
         encoderA.setPositionScaleFactor(SHOOTER_GEAR_RATIO);
         encoderA.setVelocityScaleFactor(SHOOTER_GEAR_RATIO);
         // Tune these values
-        pidA.setFF(.00029);
-        pidA.setP(0);
+        pidA.setFF(0.00013);
+        pidA.setP(0.0002);
         pidA.setI(0);
         pidA.setD(0);
 

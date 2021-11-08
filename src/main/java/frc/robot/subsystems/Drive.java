@@ -53,7 +53,7 @@ public class Drive extends SmartSubsystemBase {
     private void handleSwerve(final DoubleSupplier translateX, final DoubleSupplier translateY,
             final DoubleSupplier rotation) {
         // Need to convert inputs from -1..1 scale to m/s
-        final Modifier deadband = Modifier.deadband(0.1);
+        final Modifier deadband = Modifier.deadband(0.12);
         final double translateXSpeed = deadband.applyAsDouble(translateX.getAsDouble()) * maxDriveSpeedMetersPerSecond;
         final double translateYSpeed = deadband.applyAsDouble(translateY.getAsDouble()) * maxDriveSpeedMetersPerSecond;
         final double rotationSpeed = deadband.applyAsDouble(rotation.getAsDouble()) * maxRotationRadiansPerSecond;

@@ -130,7 +130,8 @@ public class Turret extends SmartSubsystemBase {
         return functional("Auto Aim", () -> {
             check.reset();
         }, () -> {
-            motor.set(Math.signum(vision.getRotation(AIMING_SPEED)) * AIMING_SPEED);
+            SmartDashboard.putNumber("Yaw", vision.getRotation(AIMING_SPEED));
+            motor.set(Math.signum(vision.getRotation(AIMING_SPEED)) * -AIMING_SPEED);
         }, (interrupted) -> {
             motor.set(0);
         }, () -> {

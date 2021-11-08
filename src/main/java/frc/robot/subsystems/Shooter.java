@@ -37,7 +37,7 @@ public class Shooter extends SmartSubsystemBase {
     }
 
     public enum Speed {
-        SPIT_OUT(2000, "Spit Out"), GOAL_BASE(3300, "Goal Base"), INITIATION_LINE(3500, "Initiation Line"),
+        SPIT_OUT(2000, "Spit Out"), GOAL_BASE(4000, "Goal Base"), INITIATION_LINE(4500, "Initiation Line"),
         TRENCH_SHOT(4500, "Trench Shot"), MAX_SPEED(8500, "Max Speed");
 
         private double speedRPM;

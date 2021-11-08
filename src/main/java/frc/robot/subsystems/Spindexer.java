@@ -16,12 +16,25 @@ import frc.utils.SpinDirection;
 
 public class Spindexer extends SmartSubsystemBase {
 
-    private final static double SPINDEXER_SPEED = 0.3;
-    private final static double WASHER_MACHINE_DISTANCE = 0.125;
-    private final static double WASHER_MACHINE_SPEED = 0.4;
+    private final static double WASHER_MACHINE_DISTANCE = 0.25;
 
     private final SmartMotorController motor;
     private final IEncoder encoder;
+
+    public enum Speeds {
+        SHOOTING(0.3), CLEARING(0.5), WASHER_MACHINE_SPEED(0.4);
+
+        private double value;
+
+        Speeds(double val) {
+            value = val;
+        }
+
+        double getVal() {
+            return value;
+        }
+
+    }
 
     public Spindexer(final SpindexerMap map) {
         super();
@@ -35,9 +48,9 @@ public class Spindexer extends SmartSubsystemBase {
 
     // Rotates the Spindexer while command is running
     // Should be used in "raceWith" or similar to control
-    public CommandBase spin(final SpinDirection dir) {
+    public CommandBase spin(final SpinDirection dir, Speeds speed) {
         return startEnd("SpinToShoot", () -> {
-            motor.set(dir == SpinDirection.CLOCKWISE ? SPINDEXER_SPEED : -SPINDEXER_SPEED);
+            motor.set(dir == SpinDirection.CLOCKWISE ? speed.getVal() : -speed.getVal());
         }, () -> {
             motor.set(0);
         });
@@ -50,7 +63,7 @@ public class Spindexer extends SmartSubsystemBase {
         return initAndWait("Spin " + distance + " Rotations", () -> {
             encoder.reset();
             // Determine which direction to move based on the distance we should travel
-            motor.set(Math.signum(distance) * WASHER_MACHINE_SPEED);
+            motor.set(Math.signum(distance) * Speeds.WASHER_MACHINE_SPEED.getVal());
         }, () -> Math.abs(encoder.getDistance()) >= Math.abs(distance));
     }
 
