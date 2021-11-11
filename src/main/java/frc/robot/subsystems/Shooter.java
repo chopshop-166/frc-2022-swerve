@@ -91,6 +91,11 @@ public class Shooter extends SmartSubsystemBase {
 
     @Override
     public void reset() {
+        safeState();
+    }
+
+    @Override
+    public void safeState() {
         motor.stopMotor();
         roller.stopMotor();
         hood.stopMotor();

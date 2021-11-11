@@ -160,6 +160,11 @@ public class Turret extends SmartSubsystemBase {
     }
 
     @Override
+    public void safeState() {
+        motor.stopMotor();
+    }
+
+    @Override
     public void periodic() {
         checkZero();
         SmartDashboard.putNumber("Turret Angle", encoder.getDistance());

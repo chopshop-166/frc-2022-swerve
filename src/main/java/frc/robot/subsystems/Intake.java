@@ -55,12 +55,11 @@ public class Intake extends SmartSubsystemBase {
     // For safety sake we will also put a timelimit on this so we don't stall the
     // motor for 15 seconds if something gets stuck in the intake
     public CommandBase deployIntake() {
-        return CommandRobot.deadline("Deploy Intake Deadline",
-                CommandRobot.parallel("Deploy Intake", new StartEndCommand(() -> {
-                    motor.set(INTAKE_DEPLOY_SPEED);
-                }, () -> {
-                    motor.set(0.0);
-                }, this), new WaitUntilCommand(() -> motor.getEncoder().getDistance() >= INTAKE_DEPLOY_ROTATIONS)),
+        return deadline("Deploy Intake Deadline", parallel("Deploy Intake", new StartEndCommand(() -> {
+            motor.set(INTAKE_DEPLOY_SPEED);
+        }, () -> {
+            motor.set(0.0);
+        }, this), new WaitUntilCommand(() -> motor.getEncoder().getDistance() >= INTAKE_DEPLOY_ROTATIONS)),
                 new WaitCommand(2));
     }
 
@@ -68,5 +67,10 @@ public class Intake extends SmartSubsystemBase {
     public void reset() {
         motor.getEncoder().reset();
         motor.set(0);
+    }
+
+    @Override
+    public void safeState() {
+        motor.stopMotor();
     }
 }

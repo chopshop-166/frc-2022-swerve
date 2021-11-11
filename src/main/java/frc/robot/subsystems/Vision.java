@@ -55,6 +55,11 @@ public class Vision extends SmartSubsystemBase {
     }
 
     @Override
+    public void safeState() {
+        // Nothing to set here
+    }
+
+    @Override
     public void periodic() {
         latency.addSample(camera.getLatestResult().getLatencyMillis() / 1000.0);
     }

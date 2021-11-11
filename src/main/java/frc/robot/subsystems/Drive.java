@@ -98,8 +98,16 @@ public class Drive extends SmartSubsystemBase {
 
     @Override
     public void reset() {
-        // Nothing to reset here
         gyro.reset();
+    }
+
+    @Override
+    public void safeState() {
+        SwerveModuleState state = new SwerveModuleState();
+        frontLeft.setDesiredState(state);
+        frontRight.setDesiredState(state);
+        rearLeft.setDesiredState(state);
+        rearRight.setDesiredState(state);
     }
 
     @Override

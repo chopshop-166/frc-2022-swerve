@@ -2,7 +2,6 @@ package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
-import static com.chopshop166.chopshoplib.commands.CommandRobot.sequence;
 import com.chopshop166.chopshoplib.commands.SmartSubsystemBase;
 import com.chopshop166.chopshoplib.outputs.SmartMotorController;
 
@@ -67,6 +66,11 @@ public class Kicker extends SmartSubsystemBase {
     @Override
     public void reset() {
         resetBallCount();
+    }
+
+    @Override
+    public void safeState() {
+        motor.stopMotor();
     }
 
     private void resetBallCount() {

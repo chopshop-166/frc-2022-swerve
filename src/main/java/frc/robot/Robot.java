@@ -4,6 +4,7 @@
 
 package frc.robot;
 
+import com.chopshop166.chopshoplib.Autonomous;
 import com.chopshop166.chopshoplib.commands.CommandRobot;
 import com.chopshop166.chopshoplib.controls.ButtonXboxController;
 import com.chopshop166.chopshoplib.controls.ButtonXboxController.Direction;
@@ -22,6 +23,7 @@ import frc.robot.subsystems.Shooter.Speed;
 import frc.robot.subsystems.Kicker;
 import frc.robot.subsystems.Shooter;
 import frc.utils.SpinDirection;
+import io.github.oblarg.oblog.Logger;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -123,9 +125,24 @@ public class Robot extends CommandRobot {
                 () -> driveController.getY(Hand.kLeft), () -> driveController.getX(Hand.kRight)));
     }
 
+    /**
+     * This function is run when the robot is first started up and should be used
+     * for any initialization code.
+     */
     @Override
-    public void populateAutonomous() {
-        addAutonomous("Driveoff", drive.driveDistanceY(1.2));
+    public void robotInit() {
+        super.robotInit();
+        Logger.configureLoggingAndConfig(this, false);
     }
 
+    @Override
+    public void robotPeriodic() {
+        super.robotPeriodic();
+        Logger.updateEntries();
+    }
+
+    @Autonomous(defaultAuto = true)
+    public CommandBase driveOff() {
+        return drive.driveDistanceY(1.2).withName("Driveoff");
+    }
 }

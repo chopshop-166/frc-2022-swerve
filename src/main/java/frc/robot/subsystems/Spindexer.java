@@ -85,4 +85,9 @@ public class Spindexer extends SmartSubsystemBase {
         super.periodic();
         SmartDashboard.putNumber("Enc", encoder.getDistance());
     }
+
+    @Override
+    public void safeState() {
+        motor.stopMotor();
+    }
 }
