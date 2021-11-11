@@ -2,15 +2,16 @@ package frc.robot.maps;
 
 import com.chopshop166.chopshoplib.maps.RobotMapFor;
 import com.chopshop166.chopshoplib.outputs.PIDSparkMax;
+import com.chopshop166.chopshoplib.outputs.SmartMotorController;
 import com.chopshop166.chopshoplib.outputs.WDSolenoid;
-import com.chopshop166.chopshoplib.sensors.MockGyro;
-import com.chopshop166.chopshoplib.sensors.WDigitalInput;
 import com.chopshop166.chopshoplib.sensors.PigeonGyro;
-import com.ctre.phoenix.motorcontrol.can.TalonSRX;
+import com.chopshop166.chopshoplib.sensors.WDigitalInput;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
+import com.ctre.phoenix.sensors.PigeonIMU;
 import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
+import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
 import edu.wpi.first.wpilibj.AnalogTrigger;
 import edu.wpi.first.wpilibj.GyroBase;
@@ -74,7 +75,7 @@ public class SwerveBot extends RobotMap {
 
         final double maxRotationRadianPerSecond = Math.PI;
 
-        final GyroBase gyro = new PigeonGyro(new TalonSRX(5));
+        final GyroBase gyro = new PigeonGyro(new PigeonIMU(5));
 
         return new DriveMap(frontLeft, frontRight, rearLeft, rearRight, maxDriveSpeedMetersPerSecond,
                 maxRotationRadianPerSecond, gyro);
@@ -87,10 +88,12 @@ public class SwerveBot extends RobotMap {
         final var rawMotor = motor.getMotorController();
         // Set current limit on the motor to avoid damaging anything if a ball gets
         // jammed
-        rawMotor.setSmartCurrentLimit(20);
+        rawMotor.setSmartCurrentLimit(30);
         // Set motor to brake mode so any balls that are partially in the intake don't
         // roll out
         rawMotor.setIdleMode(IdleMode.kBrake);
+        rawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+        rawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 40);
         // Configure Encoder scaling
         final var encoder = motor.getEncoder();
         // Intake has 2.5:1 gear reduction
@@ -100,15 +103,14 @@ public class SwerveBot extends RobotMap {
         // Position is in roller rotations
         encoder.setPositionScaleFactor(reduction);
 
-        final WDSolenoid piston = new WDSolenoid(0, 1);
-        // return new IntakeMap(piston, motor);
-        return new IntakeMap();
+        final WDSolenoid piston = new WDSolenoid(6, 7);
+        return new IntakeMap(piston, motor);
     }
 
     @Override
     public SpindexerMap getSpindexerMap() {
         // Gear box introduces reduction
-        final double GEAR_RATIO = 1 / 55.61;
+        final double GEAR_RATIO = 1 / 56.02;
 
         final PIDSparkMax motor = new PIDSparkMax(10, MotorType.kBrushless);
         final var rawMotor = motor.getMotorController();
@@ -116,7 +118,9 @@ public class SwerveBot extends RobotMap {
         rawMotor.setOpenLoopRampRate(0.5);
         // Configure Current limit to ensure we don't push too hard if something gets
         // jammed
-        rawMotor.setSmartCurrentLimit(20);
+        rawMotor.setSmartCurrentLimit(30);
+        rawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+        rawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 40);
         // We don't need the spindexer to hold it's position when disabled
         rawMotor.setIdleMode(IdleMode.kCoast);
 
@@ -125,8 +129,7 @@ public class SwerveBot extends RobotMap {
         encoder.setPositionScaleFactor(GEAR_RATIO);
         encoder.setVelocityScaleFactor(GEAR_RATIO);
 
-        // return new SpindexerMap(motor);
-        return new SpindexerMap();
+        return new SpindexerMap(motor);
     }
 
     @Override
@@ -135,7 +138,9 @@ public class SwerveBot extends RobotMap {
         final PIDSparkMax motor = new PIDSparkMax(11, MotorType.kBrushless);
         final var rawMotor = motor.getMotorController();
         // Limit current to ensure we don't push too hard if we jam
-        rawMotor.setSmartCurrentLimit(10);
+        rawMotor.setSmartCurrentLimit(12);
+        rawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+        rawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 40);
         final var encoder = motor.getEncoder();
         encoder.setPositionScaleFactor(GEAR_RATIO);
         encoder.setVelocityScaleFactor(GEAR_RATIO);
@@ -144,8 +149,7 @@ public class SwerveBot extends RobotMap {
         // TODO Find the correct voltages for whatever sensor we use
         ballSensor.setLimitsVoltage(1.0, 1.5);
 
-        // return new KickerMap(motor, ballSensor::getTriggerState);
-        return new KickerMap();
+        return new KickerMap(motor, ballSensor::getTriggerState);
     }
 
     @Override
@@ -158,9 +162,12 @@ public class SwerveBot extends RobotMap {
         rawMotor.setIdleMode(IdleMode.kCoast);
         // Probably need to tune this, but we don't want to push to hard if the turret
         // is stuck. JVN calculator estimates 8A with highly conservative inputs
-        rawMotor.setSmartCurrentLimit(8);
+        rawMotor.setSmartCurrentLimit(15);
+        rawMotor.setInverted(true);
         // Limit how fast we change speed to ensure we don't accelerate suddenly
         rawMotor.setOpenLoopRampRate(1);
+        rawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus0, 20);
+        rawMotor.setPeriodicFramePeriod(PeriodicFrame.kStatus1, 40);
         // Configure Encoder Conversion factor so values are in degress rotation of the
         // turret
         final var encoder = motor.getEncoder();
@@ -170,15 +177,15 @@ public class SwerveBot extends RobotMap {
         // Limit switch represents a known angle on the turret
         // Limit switch returns true when turret hits it
         final var limitSwitch = new WDigitalInput(0);
+        limitSwitch.setInverted(true);
 
-        // return new TurretMap(motor, limitSwitch);
-        return new TurretMap();
+        return new TurretMap(motor, limitSwitch);
     }
 
     @Override
     public ShooterMap getShooterMap() {
         // Conversion to RPM of shooter wheel
-        final double SHOOTER_GEAR_RATIO = 1 / 1.5;
+        final double SHOOTER_GEAR_RATIO = 1.5;
         // Conversion to RPM of roller wheel
         final double ROLLER_GEAR_RATIO = 1 / 2;
         // Conversion to angle of hood
@@ -194,48 +201,48 @@ public class SwerveBot extends RobotMap {
 
         // Shooter Motor Configuration
         rawMotorA.setIdleMode(IdleMode.kCoast);
+        rawMotorA.setInverted(true);
         rawMotorB.setIdleMode(IdleMode.kCoast);
         rawMotorB.follow(rawMotorA, true);
         encoderA.setPositionScaleFactor(SHOOTER_GEAR_RATIO);
         encoderA.setVelocityScaleFactor(SHOOTER_GEAR_RATIO);
         // Tune these values
-        pidA.setFF(0);
-        pidA.setP(0);
+        pidA.setFF(0.00013);
+        pidA.setP(0.0002);
         pidA.setI(0);
         pidA.setD(0);
 
-        final PIDSparkMax roller = new PIDSparkMax(15, MotorType.kBrushless);
-        final var rawRoller = roller.getMotorController();
-        final var rollerEncoder = roller.getEncoder();
-        final var rollerPID = roller.getPidController();
+        // final PIDSparkMax roller = new PIDSparkMax(15, MotorType.kBrushless);
+        // final var rawRoller = roller.getMotorController();
+        // final var rollerEncoder = roller.getEncoder();
+        // final var rollerPID = roller.getPidController();
 
-        rawRoller.setIdleMode(IdleMode.kCoast);
-        rollerEncoder.setPositionScaleFactor(ROLLER_GEAR_RATIO);
-        rollerEncoder.setPositionScaleFactor(ROLLER_GEAR_RATIO);
-        // Tune these values (probably just FF as this doesn't need to be precise)
-        rollerPID.setFF(0);
-        rollerPID.setP(0);
-        rollerPID.setI(0);
-        rollerPID.setD(0);
+        // rawRoller.setIdleMode(IdleMode.kCoast);
+        // rollerEncoder.setPositionScaleFactor(ROLLER_GEAR_RATIO);
+        // rollerEncoder.setPositionScaleFactor(ROLLER_GEAR_RATIO);
+        // // Tune these values (probably just FF as this doesn't need to be precise)
+        // rollerPID.setFF(0);
+        // rollerPID.setP(0);
+        // rollerPID.setI(0);
+        // rollerPID.setD(0);
 
-        final PIDSparkMax hood = new PIDSparkMax(16, MotorType.kBrushless);
-        final var rawHood = hood.getMotorController();
-        final var hoodEncoder = hood.getEncoder();
-        final var hoodPID = hood.getPidController();
+        // final PIDSparkMax hood = new PIDSparkMax(16, MotorType.kBrushless);
+        // final var rawHood = hood.getMotorController();
+        // final var hoodEncoder = hood.getEncoder();
+        // final var hoodPID = hood.getPidController();
 
-        rawHood.setIdleMode(IdleMode.kCoast);
-        // Arbitrary current at this point to prevent motor burning out
-        // Vex testing shows NEO 550 can sustain 20A for an entire match
-        rawHood.setSmartCurrentLimit(20);
-        hoodEncoder.setPositionScaleFactor(HOOD_GEAR_RATIO);
-        hoodEncoder.setVelocityScaleFactor(HOOD_GEAR_RATIO);
-        // Tune these values
-        hoodPID.setFF(0);
-        hoodPID.setP(0);
-        hoodPID.setI(0);
-        hoodPID.setD(0);
+        // rawHood.setIdleMode(IdleMode.kCoast);
+        // // Arbitrary current at this point to prevent motor burning out
+        // // Vex testing shows NEO 550 can sustain 20A for an entire match
+        // rawHood.setSmartCurrentLimit(20);
+        // hoodEncoder.setPositionScaleFactor(HOOD_GEAR_RATIO);
+        // hoodEncoder.setVelocityScaleFactor(HOOD_GEAR_RATIO);
+        // // Tune these values
+        // hoodPID.setFF(0);
+        // hoodPID.setP(0);
+        // hoodPID.setI(0);
+        // hoodPID.setD(0);
 
-        // return new ShooterMap(shooterA, roller, hood);
-        return new ShooterMap();
+        return new ShooterMap(shooterA, new SmartMotorController(), new SmartMotorController());
     }
 }

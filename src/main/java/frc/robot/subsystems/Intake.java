@@ -42,6 +42,14 @@ public class Intake extends SmartSubsystemBase {
         });
     }
 
+    public CommandBase extendIntake() {
+        return instant("Extend", () -> piston.set(Value.kForward));
+    }
+
+    public CommandBase retractIntake() {
+        return instant("Retract", () -> piston.set(Value.kReverse));
+    }
+
     // We need to "Deploy" the intake at the start of the match.
     // To do this we just need to rotate the intake a bit
     // For safety sake we will also put a timelimit on this so we don't stall the

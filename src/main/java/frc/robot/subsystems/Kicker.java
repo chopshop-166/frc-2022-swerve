@@ -2,31 +2,36 @@ package frc.robot.subsystems;
 
 import java.util.function.BooleanSupplier;
 
+import static com.chopshop166.chopshoplib.commands.CommandRobot.sequence;
 import com.chopshop166.chopshoplib.commands.SmartSubsystemBase;
 import com.chopshop166.chopshoplib.outputs.SmartMotorController;
 
 import edu.wpi.first.wpilibj2.command.CommandBase;
+import edu.wpi.first.wpilibj2.command.InstantCommand;
+import edu.wpi.first.wpilibj2.command.WaitCommand;
 import frc.robot.maps.RobotMap.KickerMap;
 
 public class Kicker extends SmartSubsystemBase {
 
-    private static double KICKER_SPEED = 0.75;
-    private SmartMotorController motor;
-    private BooleanSupplier ballSensor;
+    private static final double KICKER_SPEED = 1;
+    private static final double KICKER_SPEED_REVERSE = -0.5;
+    private final SmartMotorController motor;
+    private final BooleanSupplier ballSensor;
 
     // Variables to track how many balls we've shot
     // Commands may reset this count during operation
     private int ballCount;
     private boolean prevBallValue;
 
-    public Kicker(KickerMap map) {
+    public Kicker(final KickerMap map) {
+        super();
         motor = map.getMotor();
         ballSensor = map.getBallSensor();
     }
 
     // Command to bring a specified number of balls into the shooter
     // This can "raceWith" the spindexer to control shooting balls in auto
-    public CommandBase KickToShoot(int numBalls) {
+    public CommandBase KickToShoot(final int numBalls) {
         return functional("KickToShoot", () -> {
             resetBallCount();
         }, () -> {
@@ -39,10 +44,22 @@ public class Kicker extends SmartSubsystemBase {
     }
 
     // Fallback command if the sensor isn't working
-    public CommandBase runKicker() {
+    public CommandBase run(final boolean up) {
         return startEnd("RunKicker", () -> {
-            motor.set(KICKER_SPEED);
+            motor.set(up ? KICKER_SPEED : KICKER_SPEED_REVERSE);
         }, () -> {
+            motor.set(0);
+        });
+    }
+
+    public CommandBase start() {
+        return sequence("Start Kicker", new InstantCommand(() -> {
+            motor.set(KICKER_SPEED);
+        }, this), new WaitCommand(1));
+    }
+
+    public CommandBase stop() {
+        return instant("stop Kicker", () -> {
             motor.set(0);
         });
     }
@@ -61,7 +78,7 @@ public class Kicker extends SmartSubsystemBase {
     // This should happen when the ball has entered the shooter and can be
     // considered "shot"
     private void periodicBallCount() {
-        boolean currentBallValue = ballSensor.getAsBoolean();
+        final boolean currentBallValue = ballSensor.getAsBoolean();
         if (!currentBallValue && prevBallValue) {
             ballCount++;
         }

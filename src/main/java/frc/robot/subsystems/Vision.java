@@ -13,7 +13,7 @@ import org.photonvision.PhotonUtils;
 import org.photonvision.targeting.*;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 
-/* 
+/*
 Vision Goals:
 Find target(s)
 Tell turret a bunch of stuff about the target(s), primarily where they are.
@@ -21,14 +21,10 @@ Tell turret a bunch of stuff about the target(s), primarily where they are.
 
 public class Vision extends SmartSubsystemBase {
     private final PhotonCamera camera = new PhotonCamera("swerveCam");
-    private final double CAMERA_HEIGHT_METERS = 2.24;
-    private final double TARGET_HEIGHT_METERS = 10;
-    private final double CAMERA_PITCH_RADIANS = 0.75;
-    private SampleBuffer latency = new SampleBuffer(25);
-
-    public Vision() {
-        super();
-    }
+    private static final double CAMERA_HEIGHT_METERS = 2.24;
+    private static final double TARGET_HEIGHT_METERS = 10;
+    private static final double CAMERA_PITCH_RADIANS = 1.224;
+    private final SampleBuffer latency = new SampleBuffer(25);
 
     // Driver Mode turns off the limelight.
     public CommandBase driverMode(final boolean toggle) {
@@ -38,16 +34,16 @@ public class Vision extends SmartSubsystemBase {
     }
 
     public double getDistance() {
-        var result = camera.getLatestResult();
-        PhotonTrackedTarget target = result.getBestTarget();
+        final var result = camera.getLatestResult();
+        final PhotonTrackedTarget target = result.getBestTarget();
         return PhotonUtils.calculateDistanceToTargetMeters(CAMERA_HEIGHT_METERS, TARGET_HEIGHT_METERS,
                 CAMERA_PITCH_RADIANS, target.getPitch());
     }
 
-    public double getRotation(double lastSpeed) {
-        var result = camera.getLatestResult();
-        PhotonTrackedTarget target = result.getBestTarget();
-        double skew = target.getSkew();
+    public double getRotation(final double lastSpeed) {
+        final var result = camera.getLatestResult();
+        final PhotonTrackedTarget target = result.getBestTarget();
+        final double skew = target.getSkew();
         // Takes skew from target and subtracts latency and last rotational speed to
         // account for distance travelled inbetween frames.
         return skew - (Stats.of(latency).mean() * lastSpeed);

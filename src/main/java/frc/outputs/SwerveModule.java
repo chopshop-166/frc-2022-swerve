@@ -12,7 +12,6 @@ import edu.wpi.first.wpilibj.controller.PIDController;
 import edu.wpi.first.wpilibj.geometry.Rotation2d;
 import edu.wpi.first.wpilibj.geometry.Translation2d;
 import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj.util.Units;
 
 public class SwerveModule {
@@ -33,7 +32,7 @@ public class SwerveModule {
     private final PIDController steeringPID;
     private final SmartMotorController driveController;
 
-    private double previousSpeed = 0;
+    private double previousSpeed;
 
     public SwerveModule(final String name, final Translation2d moduleLocation, final CANCoder steeringEncoder,
             final SmartMotorController steeringController, final SmartMotorController driveController) {
@@ -67,7 +66,6 @@ public class SwerveModule {
         // advantage of the Cancoder
         final double angleOutput = steeringPID.calculate(getAngle().getDegrees(), state.angle.getDegrees());
         steeringController.set(angleOutput);
-        SmartDashboard.putNumber(name + " Angle error", steeringPID.getPositionError());
 
         // Changes the K_I as the angle error gets small
         if (Math.abs(steeringPID.getPositionError()) <= I_TRANSITION_POINT) {
@@ -83,9 +81,6 @@ public class SwerveModule {
         previousSpeed = state.speedMetersPerSecond;
 
         driveController.setSetpoint(state.speedMetersPerSecond);
-        SmartDashboard.putNumber(name + " Speed Error",
-                state.speedMetersPerSecond - driveController.getEncoder().getRate());
-        SmartDashboard.putNumber(name + " Speed", driveController.getEncoder().getRate());
     }
 
     /**
@@ -126,6 +121,14 @@ public class SwerveModule {
      */
     private Rotation2d getAngle() {
         return Rotation2d.fromDegrees(steeringEncoder.getAbsolutePosition());
+    }
+
+    public double getDistance() {
+        return driveController.getEncoder().getDistance();
+    }
+
+    public void resetDistance() {
+        driveController.getEncoder().reset();
     }
 
     /**
