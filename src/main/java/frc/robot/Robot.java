@@ -14,6 +14,7 @@ import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.maps.RobotMap;
+import frc.robot.maps.RobotMap.DriveMap;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
 import frc.robot.subsystems.Spindexer;
@@ -52,6 +53,9 @@ public class Robot extends CommandRobot {
     private final Turret turret = new Turret(map.getTurretMap(), vision);
 
     private final Shooter shooter = new Shooter(map.getShooterMap());
+
+    @Autonomous(defaultAuto = true)
+    public CommandBase driveOff = drive.driveDistanceY(1.2).withName("Driveoff");
 
     public CommandBase shootPowerCell(final Speed speed) {
         return sequence(speed.getName(), shooter.spinUpToSpeed(speed), kicker.start(),
@@ -139,10 +143,5 @@ public class Robot extends CommandRobot {
     public void robotPeriodic() {
         super.robotPeriodic();
         Logger.updateEntries();
-    }
-
-    @Autonomous(defaultAuto = true)
-    public CommandBase driveOff() {
-        return drive.driveDistanceY(1.2).withName("Driveoff");
     }
 }
