@@ -7,24 +7,20 @@ package frc.robot;
 import com.chopshop166.chopshoplib.Autonomous;
 import com.chopshop166.chopshoplib.commands.CommandRobot;
 import com.chopshop166.chopshoplib.controls.ButtonXboxController;
-import com.chopshop166.chopshoplib.controls.ButtonXboxController.Direction;
+import com.chopshop166.chopshoplib.controls.ButtonXboxController.POVDirection;
 
-import edu.wpi.first.wpilibj.GenericHID.Hand;
-import edu.wpi.first.wpilibj.XboxController.Button;
 import edu.wpi.first.wpilibj.smartdashboard.SmartDashboard;
 import edu.wpi.first.wpilibj2.command.CommandBase;
 import frc.robot.maps.RobotMap;
-import frc.robot.maps.RobotMap.DriveMap;
 import frc.robot.subsystems.Drive;
 import frc.robot.subsystems.Intake;
+import frc.robot.subsystems.Kicker;
+import frc.robot.subsystems.Shooter;
+import frc.robot.subsystems.Shooter.Speed;
 import frc.robot.subsystems.Spindexer;
 import frc.robot.subsystems.Turret;
 import frc.robot.subsystems.Vision;
-import frc.robot.subsystems.Shooter.Speed;
-import frc.robot.subsystems.Kicker;
-import frc.robot.subsystems.Shooter;
 import frc.utils.SpinDirection;
-import io.github.oblarg.oblog.Logger;
 
 /**
  * The VM is configured to automatically run this class, and to call the
@@ -71,43 +67,46 @@ public class Robot extends CommandRobot {
      */
     @Override
     public void configureButtonBindings() {
-        driveController.getButton(Button.kStart).whenPressed(drive.resetGyro());
-        driveController.getButton(Button.kA).whileHeld(intake.runIntake(true)).whileHeld(spindexer.washerMachine())
+        driveController.start().whenPressed(drive.resetGyro());
+        driveController.a().whileHeld(intake.runIntake(true))
+                .whileHeld(spindexer.washerMachine())
                 .whenReleased(spindexer.stop());
         // Shooter mappings
-        driveController.getButton(Button.kB).whileHeld(shootPowerCell(Speed.GOAL_BASE))
+        driveController.b().whileHeld(shootPowerCell(Speed.GOAL_BASE))
                 .whenReleased(parallel("Stop", shooter.spinDown(), kicker.stop()));
 
         // Turret mappings
-        driveController.getButton(Button.kBumperRight).whileHeld(turret.slowRotate(SpinDirection.CLOCKWISE));
-        driveController.getButton(Button.kBumperLeft).whileHeld(turret.slowRotate(SpinDirection.COUNTERCLOCKWISE));
+        driveController.rbumper().whileHeld(turret.slowRotate(SpinDirection.CLOCKWISE));
+        driveController.lbumper().whileHeld(turret.slowRotate(SpinDirection.COUNTERCLOCKWISE));
 
         // Secondary functions mapped to the dpad
-        driveController.getPovButton(Direction.Left).whileHeld(intake.runIntake(false));
-        driveController.getPovButton(Direction.Up).whileHeld(kicker.run(true));
-        driveController.getPovButton(Direction.Right).whileHeld(spindexer.washerMachine())
+        driveController.getPovButton(POVDirection.LEFT).whileHeld(intake.runIntake(false));
+        driveController.getPovButton(POVDirection.UP).whileHeld(kicker.run(true));
+        driveController.getPovButton(POVDirection.RIGHT).whileHeld(spindexer.washerMachine())
                 .whenReleased(spindexer.stop());
-        driveController.getPovButton(Direction.Down).whileHeld(kicker.run(false));
+        driveController.getPovButton(POVDirection.DOWN).whileHeld(kicker.run(false));
 
-        copilotController.getButton(Button.kA).whileHeld(intake.runIntake(true)).whileHeld(spindexer.washerMachine())
+        copilotController.a().whileHeld(intake.runIntake(true))
+                .whileHeld(spindexer.washerMachine())
                 .whenReleased(spindexer.stop());
-        copilotController.getButton(Button.kB).whileHeld(shootPowerCell(Speed.GOAL_BASE))
+        copilotController.b().whileHeld(shootPowerCell(Speed.GOAL_BASE))
                 .whenReleased(parallel("Stop", shooter.spinDown(), kicker.stop()));
-        copilotController.getButton(Button.kY).whileHeld(intake.runIntake(false));
-        copilotController.getButton(Button.kX).whileHeld(aimTurret()).whenReleased(vision.driverMode(true));
+        copilotController.y().whileHeld(intake.runIntake(false));
+        copilotController.x().whileHeld(aimTurret()).whenReleased(vision.driverMode(true));
 
-        copilotController.getButton(Button.kBumperRight).whileHeld(turret.slowRotate(SpinDirection.CLOCKWISE));
-        copilotController.getButton(Button.kBumperLeft).whileHeld(turret.slowRotate(SpinDirection.COUNTERCLOCKWISE));
-        copilotController.getButton(Button.kB).whileHeld(shootPowerCell(Speed.GOAL_BASE))
+        copilotController.rbumper().whileHeld(turret.slowRotate(SpinDirection.CLOCKWISE));
+        copilotController.lbumper()
+                .whileHeld(turret.slowRotate(SpinDirection.COUNTERCLOCKWISE));
+        copilotController.b().whileHeld(shootPowerCell(Speed.GOAL_BASE))
                 .whenReleased(parallel("Stop", shooter.spinDown(), kicker.stop()));
-        copilotController.getPovButton(Direction.Right)
+        copilotController.getPovButton(POVDirection.RIGHT)
                 .whileHeld(spindexer.spin(SpinDirection.CLOCKWISE, Spindexer.Speeds.CLEARING))
                 .whenReleased(spindexer.stop());
-        copilotController.getPovButton(Direction.Left)
+        copilotController.getPovButton(POVDirection.LEFT)
                 .whileHeld(spindexer.spin(SpinDirection.COUNTERCLOCKWISE, Spindexer.Speeds.CLEARING))
                 .whenReleased(spindexer.stop());
-        copilotController.getPovButton(Direction.Up).whileHeld(kicker.run(true));
-        copilotController.getPovButton(Direction.Down).whileHeld(kicker.run(false));
+        copilotController.getPovButton(POVDirection.UP).whileHeld(kicker.run(true));
+        copilotController.getPovButton(POVDirection.DOWN).whileHeld(kicker.run(false));
     }
 
     @Override
@@ -125,8 +124,8 @@ public class Robot extends CommandRobot {
      */
     @Override
     public void setDefaultCommands() {
-        drive.setDefaultCommand(drive.fieldCentricDrive(() -> driveController.getX(Hand.kLeft),
-                () -> driveController.getY(Hand.kLeft), () -> driveController.getX(Hand.kRight)));
+        drive.setDefaultCommand(drive.fieldCentricDrive(driveController::getLeftX, driveController::getLeftY,
+                driveController::getRightX));
     }
 
     /**
@@ -136,12 +135,10 @@ public class Robot extends CommandRobot {
     @Override
     public void robotInit() {
         super.robotInit();
-        Logger.configureLoggingAndConfig(this, false);
     }
 
     @Override
     public void robotPeriodic() {
         super.robotPeriodic();
-        Logger.updateEntries();
     }
 }

@@ -1,18 +1,18 @@
 package frc.outputs;
 
-import com.chopshop166.chopshoplib.outputs.PIDSparkMax;
-import com.chopshop166.chopshoplib.outputs.SmartMotorController;
+import com.chopshop166.chopshoplib.motors.PIDControlType;
+import com.chopshop166.chopshoplib.motors.PIDSparkMax;
+import com.chopshop166.chopshoplib.motors.SmartMotorController;
 import com.ctre.phoenix.sensors.CANCoder;
-import com.revrobotics.CANEncoder;
-import com.revrobotics.CANPIDController;
 import com.revrobotics.CANSparkMax;
-import com.revrobotics.ControlType;
+import com.revrobotics.RelativeEncoder;
+import com.revrobotics.SparkMaxPIDController;
 
-import edu.wpi.first.wpilibj.controller.PIDController;
-import edu.wpi.first.wpilibj.geometry.Rotation2d;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.kinematics.SwerveModuleState;
-import edu.wpi.first.wpilibj.util.Units;
+import edu.wpi.first.math.controller.PIDController;
+import edu.wpi.first.math.geometry.Rotation2d;
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.kinematics.SwerveModuleState;
+import edu.wpi.first.math.util.Units;
 
 public class SwerveModule {
 
@@ -92,11 +92,11 @@ public class SwerveModule {
     public static PIDSparkMax configureDriveMotor(final PIDSparkMax motor) {
         // Get raw objects from the PIDSparkMax
         final CANSparkMax sparkMax = motor.getMotorController();
-        final CANEncoder encoder = motor.getEncoder().getRaw();
-        final CANPIDController pid = motor.getPidController();
+        final RelativeEncoder encoder = motor.getEncoder().getRaw();
+        final SparkMaxPIDController pid = motor.getPidController();
 
         // Set Motor controller configuration
-        motor.setControlType(ControlType.kVelocity);
+        motor.setControlType(PIDControlType.Velocity);
         sparkMax.setIdleMode(CANSparkMax.IdleMode.kBrake);
         // Set velocity conversion to convert RPM to M/s
         encoder.setVelocityConversionFactor((GEAR_RATIO * Math.PI * WHEEL_DIAMETER_M) / 60);

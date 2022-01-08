@@ -1,11 +1,12 @@
 package frc.robot.maps;
 
 import com.chopshop166.chopshoplib.maps.RobotMapFor;
-import com.chopshop166.chopshoplib.outputs.PIDSparkMax;
-import com.chopshop166.chopshoplib.outputs.SmartMotorController;
-import com.chopshop166.chopshoplib.outputs.WDSolenoid;
+import com.chopshop166.chopshoplib.motors.PIDSparkMax;
+import com.chopshop166.chopshoplib.motors.SmartMotorController;
+import com.chopshop166.chopshoplib.pneumatics.CtreDSolenoid;
 import com.chopshop166.chopshoplib.sensors.PigeonGyro;
 import com.chopshop166.chopshoplib.sensors.WDigitalInput;
+import com.chopshop166.chopshoplib.sensors.WGyro;
 import com.ctre.phoenix.sensors.AbsoluteSensorRange;
 import com.ctre.phoenix.sensors.CANCoder;
 import com.ctre.phoenix.sensors.PigeonIMU;
@@ -13,10 +14,9 @@ import com.revrobotics.CANSparkMax.IdleMode;
 import com.revrobotics.CANSparkMaxLowLevel.MotorType;
 import com.revrobotics.CANSparkMaxLowLevel.PeriodicFrame;
 
+import edu.wpi.first.math.geometry.Translation2d;
+import edu.wpi.first.math.util.Units;
 import edu.wpi.first.wpilibj.AnalogTrigger;
-import edu.wpi.first.wpilibj.GyroBase;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
-import edu.wpi.first.wpilibj.util.Units;
 import frc.outputs.SwerveModule;
 
 // Need to get MAC address for roborio
@@ -75,7 +75,7 @@ public class SwerveBot extends RobotMap {
 
         final double maxRotationRadianPerSecond = Math.PI;
 
-        final GyroBase gyro = new PigeonGyro(new PigeonIMU(5));
+        final WGyro gyro = new WGyro(new PigeonGyro(new PigeonIMU(5)));
 
         return new DriveMap(frontLeft, frontRight, rearLeft, rearRight, maxDriveSpeedMetersPerSecond,
                 maxRotationRadianPerSecond, gyro);
@@ -103,7 +103,7 @@ public class SwerveBot extends RobotMap {
         // Position is in roller rotations
         encoder.setPositionScaleFactor(reduction);
 
-        final WDSolenoid piston = new WDSolenoid(6, 7);
+        final CtreDSolenoid piston = new CtreDSolenoid(6, 7);
         return new IntakeMap(piston, motor);
     }
 

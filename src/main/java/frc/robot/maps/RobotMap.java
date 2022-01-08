@@ -3,15 +3,15 @@ package frc.robot.maps;
 import java.util.function.BooleanSupplier;
 
 import com.chopshop166.chopshoplib.maps.RobotMapFor;
-import com.chopshop166.chopshoplib.outputs.IDSolenoid;
-import com.chopshop166.chopshoplib.outputs.MockDSolenoid;
-import com.chopshop166.chopshoplib.outputs.SmartMotorController;
+import com.chopshop166.chopshoplib.motors.SmartMotorController;
+import com.chopshop166.chopshoplib.pneumatics.IDSolenoid;
+import com.chopshop166.chopshoplib.pneumatics.MockDSolenoid;
 import com.chopshop166.chopshoplib.sensors.MockDigitalInput;
 import com.chopshop166.chopshoplib.sensors.MockGyro;
+import com.chopshop166.chopshoplib.sensors.WGyro;
 import com.ctre.phoenix.sensors.CANCoder;
 
-import edu.wpi.first.wpilibj.GyroBase;
-import edu.wpi.first.wpilibj.geometry.Translation2d;
+import edu.wpi.first.math.geometry.Translation2d;
 import frc.outputs.SwerveModule;
 
 // Need to get MAC address for roborio
@@ -26,7 +26,7 @@ public class RobotMap {
         private final SwerveModule rearRight;
         private final double maxDriveSpeedMetersPerSecond;
         private final double maxRotationRadianPerSecond;
-        private final GyroBase gyro;
+        private final WGyro gyro;
 
         public DriveMap() {
 
@@ -46,12 +46,12 @@ public class RobotMap {
 
             this.maxRotationRadianPerSecond = Math.PI;
 
-            this.gyro = new MockGyro();
+            this.gyro = new WGyro(new MockGyro());
         }
 
         public DriveMap(final SwerveModule frontLeft, final SwerveModule frontRight, final SwerveModule rearLeft,
                 final SwerveModule rearRight, final double maxDriveSpeedMetersPerSecond,
-                final double maxRotationRadianPerSecond, final GyroBase gyro) {
+                final double maxRotationRadianPerSecond, final WGyro gyro) {
 
             this.frontLeft = frontLeft;
 
@@ -92,7 +92,7 @@ public class RobotMap {
             return maxRotationRadianPerSecond;
         }
 
-        public GyroBase getGyro() {
+        public WGyro getGyro() {
             return gyro;
         }
     }
